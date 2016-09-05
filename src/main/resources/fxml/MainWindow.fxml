@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.lodz.uni.math.app.controller.MainWindowController">
    <children>
-      <MenuBar>
-        <menus>
-          <Menu mnemonicParsing="false" text="Position">
-            <items>
-                  <MenuItem mnemonicParsing="false" text="add" />
-                  <MenuItem mnemonicParsing="false" text="Unspecified Action" />
-              <MenuItem mnemonicParsing="false" text="add" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Category">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
+      <ToolBar>
+        <items>
+          <Button fx:id="addOperationButton" mnemonicParsing="false" text="Add operation" />
+            <Button fx:id="categoriesButton" mnemonicParsing="false" text="Categories" />
+            <Button fx:id="walletsButton" mnemonicParsing="false" text="Wallets" />
+            <Button fx:id="statisticsButton" mnemonicParsing="false" text="statistics" />
+        </items>
+      </ToolBar>
+      <SplitPane dividerPositions="0.5">
+         <items>
+            <VBox>
+               <children>
+                  <SplitPane dividerPositions="0.5" orientation="VERTICAL">
+                     <items>
+                        <VBox fx:id="rightTopVBox" prefHeight="200.0" prefWidth="100.0" />
+                        <VBox fx:id="rightDownVBox" prefHeight="200.0" prefWidth="100.0" />
+                     </items>
+                  </SplitPane>
+               </children>
+            </VBox>
+            <VBox fx:id="leftVBox" />
+         </items>
+      </SplitPane>
    </children>
 </VBox>
