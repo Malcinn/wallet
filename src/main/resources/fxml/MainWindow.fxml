@@ -15,20 +15,24 @@
             <Button fx:id="statisticsButton" mnemonicParsing="false" text="statistics" />
         </items>
       </ToolBar>
-      <SplitPane dividerPositions="0.5">
-         <items>
-            <VBox>
-               <children>
-                  <SplitPane dividerPositions="0.5" orientation="VERTICAL">
-                     <items>
-                        <VBox fx:id="rightTopVBox" prefHeight="200.0" prefWidth="100.0" />
-                        <VBox fx:id="rightDownVBox" prefHeight="200.0" prefWidth="100.0" />
-                     </items>
-                  </SplitPane>
-               </children>
-            </VBox>
-            <VBox fx:id="leftVBox" />
-         </items>
-      </SplitPane>
+      <VBox VBox.vgrow="ALWAYS">
+         <children>
+            <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
+               <items>
+                  <VBox>
+                     <children>
+                        <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                           <items>
+                              <VBox fx:id="leftTopVBox" prefHeight="247.0" prefWidth="393.0" />
+                              <VBox fx:id="leftDownVBox" />
+                           </items>
+                        </SplitPane>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="rightVBox" />
+               </items>
+            </SplitPane>
+         </children>
+      </VBox>
    </children>
 </VBox>

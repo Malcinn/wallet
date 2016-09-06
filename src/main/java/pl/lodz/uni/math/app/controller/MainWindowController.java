@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class MainWindowController implements Initializable {
@@ -24,19 +25,23 @@ public class MainWindowController implements Initializable {
 	Button statisticsButton;
 	
 	@FXML
-	VBox leftVBox;
+	VBox rightVBox;
 	
 	@FXML
-	VBox rightTopVBox;
+	VBox leftTopVBox;
 	
 	@FXML
-	VBox rightDownVBox;
+	VBox leftDownVBox;
 	
 	public void initialize(URL location, ResourceBundle resources) {
 		addOperationButton.setOnAction(new javafx.event.EventHandler<ActionEvent>() {
 			
 			@Override
 			public void handle(ActionEvent event) {
+				Label label = new Label("jakis dziwny label");
+				rightVBox.getChildren().add(label);
+				leftTopVBox.getChildren().add(label);
+				leftDownVBox.getChildren().add(label);
 				System.out.println("asdasd");
 			}
 		});

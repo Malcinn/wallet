@@ -1,0 +1,24 @@
+CREATE TABLE Category (
+id INT NOT NULL,
+name VARCHAR(255) NOT NULL,
+PRIMARY KEY(id)
+)
+
+CREATE TABLE Wallet (
+id INT NOT NULL,
+name VARCHAR(255) NOT NULL,
+PRIMARY KEY(id)
+)
+
+CREATE TABLE Operation (
+id INT NOT NULL,
+type VARCHAR(3) NOT NULL,
+date DATE NOT NULL,
+description VARCHAR(2048),
+amount DECIMAL NOT NULL,
+category_id INT,
+wallet_id INT NOT NULL,
+PRIMARY KEY(id),
+FOREIGN KEY(category_id) REFERENCES Category(id),
+FOREIGN KEY(wallet_id) REFERENCES Wallet(id)
+)
