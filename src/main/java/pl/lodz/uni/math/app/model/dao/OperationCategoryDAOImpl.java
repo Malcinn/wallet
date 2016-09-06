@@ -19,7 +19,7 @@ public class OperationCategoryDAOImpl implements OperationCategoryDAO{
 	
 	@Override
 	public boolean addOperationCategory(OperationCategory operationCategory) {
-		String sql = "INSERT INTO "+ OPERATION_CATEGORY + "VALUES(?, ?)";
+		String sql = "INSERT INTO "+ OPERATION_CATEGORY + " VALUES(?, ?)";
 		PreparedStatement statement;
 		try {
 			connection.setAutoCommit(false);
@@ -28,6 +28,7 @@ public class OperationCategoryDAOImpl implements OperationCategoryDAO{
 			statement.setString(2, operationCategory.getName());
 			statement.executeUpdate();
 			connection.commit();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
