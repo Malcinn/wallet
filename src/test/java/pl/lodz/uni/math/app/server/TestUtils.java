@@ -12,7 +12,7 @@ public class TestUtils {
 			+ "name VARCHAR(255) NOT NULL," + "PRIMARY KEY(id))";
 
 	public static final String CREATE_WALLET_TABLE_STRING = "CREATE TABLE Wallet (" + "id INT IDENTITY NOT NULL,"
-			+ "name VARCHAR(255) UNIQUE NOT NULL," + "PRIMARY KEY(id))";
+			+ "name VARCHAR(255) NOT NULL," + "PRIMARY KEY(id))";
 
 	public static final String CREATE_OPERATION_TABLE_STRING = "CREATE TABLE Operation (" + "id INT IDENTITY NOT NULL,"
 			+ "type VARCHAR(3) NOT NULL," + "date DATE NOT NULL, " + "description VARCHAR(2048),"

@@ -2,50 +2,17 @@ package pl.lodz.uni.math.app.model.dao;
 
 import static org.junit.Assert.*;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import org.junit.BeforeClass;
-import org.junit.AfterClass;
 import org.junit.Test;
 
 import pl.lodz.uni.math.app.model.domain.Category;
-import pl.lodz.uni.math.app.server.MyHsqlDBServer;
-import pl.lodz.uni.math.app.server.TestUtils;
 
-public class CategoryDAOImplTest {
+public class CategoryDAOImplTest extends DAOTest{
 
-	private static MyHsqlDBServer myHsqlDBServer = new MyHsqlDBServer();
-
-	private static CategoryDAO categoryDAO;
-
-	private static Connection connection = null;
-
-	@BeforeClass
-	public static void beforeClass() {
-		try {
-			myHsqlDBServer.start();
-			connection = myHsqlDBServer.getConnection();
-			TestUtils.createCategoryTable(connection);
-			TestUtils.createWalletTable(connection);
-			TestUtils.createOperationTable(connection);
-			categoryDAO = new CategoryDAOImpl(connection);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@AfterClass
-	public static void afterClass() {
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			System.out.println("Error ocurred while closing the connection with database. Message" + e.getMessage());
-		}
-		myHsqlDBServer.stop();
-
-	}
+	private static final String CATEGORY = "Category";
+	
+	private CategoryDAO categoryDAO = new CategoryDAOImpl(connection);
 
 	@Test
 	public void addCategoryMethodAddSingleCategoryTest() {
@@ -139,9 +106,9 @@ public class CategoryDAOImplTest {
 	}
 	
 	public void clearCategoryTable() {
-		String deleteAllCategoryRows = "DELETE FROM Category";
+		String deleteAllRows = "DELETE FROM " + CATEGORY;
 		try {
-			PreparedStatement statement = connection.prepareStatement(deleteAllCategoryRows);
+			PreparedStatement statement = connection.prepareStatement(deleteAllRows);
 			statement.executeUpdate();
 			connection.commit();
 		} catch (SQLException e) {

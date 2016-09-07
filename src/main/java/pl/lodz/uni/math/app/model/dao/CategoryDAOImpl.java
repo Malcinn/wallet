@@ -4,9 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.sql.StatementEvent;
 
 import pl.lodz.uni.math.app.model.domain.Category;
 
@@ -18,24 +15,14 @@ public class CategoryDAOImpl implements CategoryDAO {
 
 	public CategoryDAOImpl(Connection connection) {
 		this.connection = connection;
-		setAutoCommitModeOnConnection(this.connection);
-	}
-
-	private void setAutoCommitModeOnConnection(Connection connection) {
-		try {
-			connection.setAutoCommit(false);
-		} catch (SQLException e) {
-			System.out.println(
-					"Error ocurred while, setting autocomit mode to false on the connection property. Message: "
-							+ e.getMessage());
-		}
+		DAOUtils.setAutoCommitModeOnConnection(this.connection);
 	}
 
 	@Override
 	public boolean addCategory(Category category) {
 		if (category != null) {
 			if (!checkIfCategoryExistInDatabase(category.getName())) {
-				String sql = "INSERT INTO " + CATEGORY + " VALUES(NULL, ?)";
+				String sql = "INSERT INTO " + CATEGORY + " VALUES (NULL, ?)";
 				PreparedStatement statement = null;
 				try {
 					statement = connection.prepareStatement(sql);
@@ -75,10 +62,11 @@ public class CategoryDAOImpl implements CategoryDAO {
 	@Override
 	public Category getCategory(String name) {
 		if (name != null) {
-			String sql = "SELECT * FROM " + CATEGORY + " WHERE name LIKE ('" + name + "')";
+			String sql = "SELECT * FROM " + CATEGORY + " WHERE name LIKE (?)";
 			PreparedStatement statement = null;
 			try {
 				statement = connection.prepareStatement(sql);
+				statement.setString(1, name);
 				ResultSet resultSet = statement.executeQuery();
 				resultSet.next();
 				Category category = new Category(resultSet.getInt(1),
@@ -114,16 +102,17 @@ public class CategoryDAOImpl implements CategoryDAO {
 	@Override
 	public boolean removeCategory(Category category) {
 		if (category != null) {
-			String sql = "DELETE FROM " + CATEGORY + " WHERE id=" + category.getId();
+			String sql = "DELETE FROM " + CATEGORY + " WHERE id=?";
 			PreparedStatement statement = null;
 			try {
 				statement = connection.prepareStatement(sql);
+				statement.setInt(1, category.getId());
 				int result = statement.executeUpdate();
 				statement.close();
 				connection.commit();
 				return (result == 0) ? false : true;
 			} catch (SQLException e) {
-				System.out.println("Error ocurred in remove Category method. Message: " + e.getMessage());
+				System.out.println("Error ocurred in removeCategory method. Message: " + e.getMessage());
 			}
 		}
 		return false;

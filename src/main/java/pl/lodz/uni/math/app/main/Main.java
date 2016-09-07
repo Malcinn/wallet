@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import pl.lodz.uni.math.app.server.MyHsqlDBServer;
 
 public class Main extends Application {
 
