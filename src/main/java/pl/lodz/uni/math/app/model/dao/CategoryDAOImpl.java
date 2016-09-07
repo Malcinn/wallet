@@ -8,15 +8,15 @@ import java.sql.Statement;
 
 import javax.sql.StatementEvent;
 
-import pl.lodz.uni.math.app.model.domain.OperationCategory;
+import pl.lodz.uni.math.app.model.domain.Category;
 
-public class OperationCategoryDAOImpl implements OperationCategoryDAO {
+public class CategoryDAOImpl implements CategoryDAO {
 
-	private static final String OPERATION_CATEGORY = "Category";
+	private static final String CATEGORY = "Category";
 
 	private Connection connection = null;
 
-	public OperationCategoryDAOImpl(Connection connection) {
+	public CategoryDAOImpl(Connection connection) {
 		this.connection = connection;
 		setAutoCommitModeOnConnection(this.connection);
 	}
@@ -32,20 +32,20 @@ public class OperationCategoryDAOImpl implements OperationCategoryDAO {
 	}
 
 	@Override
-	public boolean addOperationCategory(OperationCategory operationCategory) {
-		if (operationCategory != null) {
-			if (!checkIfOperationCategoryExistInDatabase(operationCategory.getName())) {
-				String sql = "INSERT INTO " + OPERATION_CATEGORY + " VALUES(NULL, ?)";
+	public boolean addCategory(Category category) {
+		if (category != null) {
+			if (!checkIfCategoryExistInDatabase(category.getName())) {
+				String sql = "INSERT INTO " + CATEGORY + " VALUES(NULL, ?)";
 				PreparedStatement statement = null;
 				try {
 					statement = connection.prepareStatement(sql);
-					statement.setString(1, operationCategory.getName());
+					statement.setString(1, category.getName());
 					statement.executeUpdate();
 					connection.commit();
 					statement.close();
 					return true;
 				} catch (SQLException e) {
-					System.out.println("Error occured in addOperationCategory method. Message: " + e.getMessage());
+					System.out.println("Error occured in addCategory method. Message: " + e.getMessage());
 				}
 			}
 		}
@@ -53,49 +53,49 @@ public class OperationCategoryDAOImpl implements OperationCategoryDAO {
 	}
 
 	@Override
-	public OperationCategory getOperationCategory(int id) {
-		String sql = "SELECT * FROM " + OPERATION_CATEGORY + " WHERE id=" + id;
+	public Category getCategory(int id) {
+		String sql = "SELECT * FROM " + CATEGORY + " WHERE id=" + id;
 		PreparedStatement statement = null;
 		try {
 			statement = connection.prepareStatement(sql);
 			ResultSet resultSet = statement.executeQuery();
 			resultSet.next();
-			OperationCategory operationCategory = new OperationCategory(resultSet.getInt(1), resultSet.getString(2));
+			Category category = new Category(resultSet.getInt(1), resultSet.getString(2));
 			resultSet.close();
 			connection.commit();
 			statement.close();
-			return operationCategory;
+			return category;
 		} catch (SQLException e) {
-			System.out.println("Error ocurred in getOperationCategory method. Message: " + e.getMessage());
+			System.out.println("Error ocurred in getCategory method. Message: " + e.getMessage());
 		}
 
 		return null;
 	}
 
 	@Override
-	public OperationCategory getOperationCategory(String name) {
+	public Category getCategory(String name) {
 		if (name != null) {
-			String sql = "SELECT * FROM " + OPERATION_CATEGORY + " WHERE name LIKE ('" + name + "')";
+			String sql = "SELECT * FROM " + CATEGORY + " WHERE name LIKE ('" + name + "')";
 			PreparedStatement statement = null;
 			try {
 				statement = connection.prepareStatement(sql);
 				ResultSet resultSet = statement.executeQuery();
 				resultSet.next();
-				OperationCategory operationCategory = new OperationCategory(resultSet.getInt(1),
+				Category category = new Category(resultSet.getInt(1),
 						resultSet.getString(2));
 				resultSet.close();
 				connection.commit();
 				statement.close();
-				return operationCategory;
+				return category;
 			} catch (SQLException e) {
-				System.out.println("Error ocurred in getOperationCategory method. Message: " + e.getMessage());
+				System.out.println("Error ocurred in getCategory method. Message: " + e.getMessage());
 			}
 		}
 		return null;
 	}
 
-	public boolean checkIfOperationCategoryExistInDatabase(String name) {
-		String sql = "SELECT * FROM " + OPERATION_CATEGORY;
+	public boolean checkIfCategoryExistInDatabase(String name) {
+		String sql = "SELECT * FROM " + CATEGORY;
 		PreparedStatement statement = null;
 		try {
 			statement = connection.prepareStatement(sql);
@@ -106,15 +106,15 @@ public class OperationCategoryDAOImpl implements OperationCategoryDAO {
 			}
 		} catch (SQLException e) {
 			System.out.println(
-					"Error ocurred in checkIfOperationCategoryExistInDatabase method. Message: " + e.getMessage());
+					"Error ocurred in checkIfCategoryExistInDatabase method. Message: " + e.getMessage());
 		}
 		return false;
 	}
 
 	@Override
-	public boolean removeOperationCategory(OperationCategory operationCategory) {
-		if (operationCategory != null) {
-			String sql = "DELETE FROM " + OPERATION_CATEGORY + " WHERE id=" + operationCategory.getId();
+	public boolean removeCategory(Category category) {
+		if (category != null) {
+			String sql = "DELETE FROM " + CATEGORY + " WHERE id=" + category.getId();
 			PreparedStatement statement = null;
 			try {
 				statement = connection.prepareStatement(sql);
@@ -123,27 +123,27 @@ public class OperationCategoryDAOImpl implements OperationCategoryDAO {
 				connection.commit();
 				return (result == 0) ? false : true;
 			} catch (SQLException e) {
-				System.out.println("Error ocurred in removeOperationCategory method. Message: " + e.getMessage());
+				System.out.println("Error ocurred in remove Category method. Message: " + e.getMessage());
 			}
 		}
 		return false;
 	}
 
 	@Override
-	public boolean updateOperationCategory(OperationCategory operationCategory) {
-		if (operationCategory != null) {
-			String sql = "UPDATE " + OPERATION_CATEGORY + " SET name=? WHERE id=?";
+	public boolean updateCategory(Category category) {
+		if (category != null) {
+			String sql = "UPDATE " + CATEGORY + " SET name=? WHERE id=?";
 			PreparedStatement statement = null;
 			try {
 				statement = connection.prepareStatement(sql);
-				statement.setString(1, operationCategory.getName());
-				statement.setInt(2, operationCategory.getId());
+				statement.setString(1, category.getName());
+				statement.setInt(2, category.getId());
 				int result = statement.executeUpdate();
 				connection.commit();
 				statement.close();
 				return (result == 0) ? false : true;
 			} catch (SQLException e) {
-				System.out.println("Error ocurred in updateOperationCategory method. Message" + e.getMessage());
+				System.out.println("Error ocurred in updateCategory method. Message" + e.getMessage());
 			}
 		}
 		return false;

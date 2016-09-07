@@ -17,13 +17,13 @@ public class Operation {
 	
 	private Wallet wallet = null;
 	
-	private OperationCategory category = null;
+	private Category category = null;
 
 	public Operation() {
 	}
 
 	public Operation(OperationType type, Date date, String description, BigDecimal amount, Wallet wallet,
-			OperationCategory category) {
+			Category category) {
 		this.type = type;
 		this.date = date;
 		this.description = description;
@@ -33,7 +33,7 @@ public class Operation {
 	}
 	
 	public Operation(int id, OperationType type, Date date, String description, BigDecimal amount, Wallet wallet,
-			OperationCategory category) {
+			Category category) {
 		this.id = id;
 		this.type = type;
 		this.date = date;
@@ -47,7 +47,7 @@ public class Operation {
 		return id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 
@@ -91,11 +91,11 @@ public class Operation {
 		this.wallet = wallet;
 	}
 
-	public OperationCategory getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(OperationCategory category) {
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 		

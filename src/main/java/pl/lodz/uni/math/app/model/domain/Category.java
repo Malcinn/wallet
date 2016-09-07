@@ -1,19 +1,19 @@
 package pl.lodz.uni.math.app.model.domain;
 
-public class OperationCategory {
+public class Category {
 	
 	private int id;
 	
 	private String name = null;
 
-	public OperationCategory() {
+	public Category() {
 	}
 
-	public OperationCategory(String name) {
+	public Category(String name) {
 		this.name = name;
 	}
 	
-	public OperationCategory(int id, String name) {
+	public Category(int id, String name) {
 		this.id = id;
 		this.name = name;
 	}
@@ -22,7 +22,7 @@ public class OperationCategory {
 		return id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 
