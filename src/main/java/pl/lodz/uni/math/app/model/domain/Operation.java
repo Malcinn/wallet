@@ -22,6 +22,16 @@ public class Operation {
 	public Operation() {
 	}
 
+	public Operation(OperationType type, Date date, String description, BigDecimal amount, Wallet wallet,
+			OperationCategory category) {
+		this.type = type;
+		this.date = date;
+		this.description = description;
+		this.amount = amount;
+		this.wallet = wallet;
+		this.category = category;
+	}
+	
 	public Operation(int id, OperationType type, Date date, String description, BigDecimal amount, Wallet wallet,
 			OperationCategory category) {
 		this.id = id;

@@ -9,6 +9,10 @@ public class Wallet {
 	public Wallet() {
 	}
 
+	public Wallet(String name) {
+		this.name = name;
+	}
+	
 	public Wallet(int id, String name) {
 		this.id = id;
 		this.name = name;

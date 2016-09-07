@@ -9,6 +9,10 @@ public class OperationCategory {
 	public OperationCategory() {
 	}
 
+	public OperationCategory(String name) {
+		this.name = name;
+	}
+	
 	public OperationCategory(int id, String name) {
 		this.id = id;
 		this.name = name;

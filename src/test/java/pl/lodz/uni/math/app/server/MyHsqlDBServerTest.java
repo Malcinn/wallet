@@ -14,11 +14,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 
-import static pl.lodz.uni.math.app.server.MyHsqlDBServerUtils.*;
+import static pl.lodz.uni.math.app.server.TestUtils.*;
 
 public class MyHsqlDBServerTest {
 
-	protected static MyHsqlDBServer myHsqlDBServer = new MyHsqlDBServer(DATABASE, DB_NAME, PORT_NUMBER);
+	protected static MyHsqlDBServer myHsqlDBServer = new MyHsqlDBServer();
 
 	protected Connection connection;
 
@@ -35,7 +35,7 @@ public class MyHsqlDBServerTest {
 	@Test
 	public void getConnectionTestTrue() {
 		try {
-			connection = myHsqlDBServer.getConnection(DB_NAME, USER, PASSWORD, PORT_NUMBER);
+			connection = myHsqlDBServer.getConnection();
 			assertFalse(connection.isClosed());
 			connection.close();
 		} catch (SQLException e) {

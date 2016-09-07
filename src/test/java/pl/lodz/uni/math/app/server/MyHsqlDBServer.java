@@ -11,14 +11,23 @@ import org.hsqldb.server.ServerAcl.AclFormatException;
 
 public class MyHsqlDBServer extends Server{
 
-	public MyHsqlDBServer(final String database, final String dbname, final int portNumber) {
+	public static final String DATABASE = "mem:testdb";
+
+	public static final String DB_NAME = "testdb";
+
+	public static final String USER = "SA";
+
+	public static final String PASSWORD = "";
+	
+	public static final int PORT_NUMBER = 9001;
+	
+	public MyHsqlDBServer() {
 		super();
 		HsqlProperties properties = new HsqlProperties();
-		properties.setProperty("server.database.0", database);
-		properties.setProperty("server.dbname.0", dbname);
+		properties.setProperty("server.database.0", DATABASE);
+		properties.setProperty("server.dbname.0", DB_NAME);
 		properties.setProperty("server.silent", false);
 		properties.setProperty("server.trace", true);
-		properties.setProperty("server.port", portNumber);
 		try {
 			this.setProperties(properties);
 		} catch (IOException e) {
@@ -38,8 +47,8 @@ public class MyHsqlDBServer extends Server{
 		return super.stop();
 	}
 	
-	public Connection getConnection(String dbname, String user, String password, int portNumber) throws SQLException {
-		return  DriverManager.getConnection("jdbc:hsqldb:hsql://127.0.0.1:" + portNumber + "/" + dbname, user, password);
+	public Connection getConnection() throws SQLException {
+		return  DriverManager.getConnection("jdbc:hsqldb:hsql://localhost:"+PORT_NUMBER+"/"+DB_NAME, USER, PASSWORD);
 	}
 	
 }
