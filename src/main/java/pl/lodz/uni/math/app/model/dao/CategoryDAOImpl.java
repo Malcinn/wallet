@@ -15,7 +15,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 
 	public CategoryDAOImpl(Connection connection) {
 		this.connection = connection;
-		DAOUtils.setAutoCommitModeOnConnection(this.connection);
+		DAOUtils.setValueOfAutoCommitModeOnConnection(this.connection, false);
 	}
 
 	@Override

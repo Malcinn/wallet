@@ -15,7 +15,7 @@ public class WalletDAOImpl implements WalletDAO{
 	
 	public WalletDAOImpl(Connection connection) {
 		this.connection = connection;
-		DAOUtils.setAutoCommitModeOnConnection(connection);
+		DAOUtils.setValueOfAutoCommitModeOnConnection(connection, false);
 	}
 	
 	@Override

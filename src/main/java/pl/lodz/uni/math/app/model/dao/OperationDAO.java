@@ -3,12 +3,20 @@ package pl.lodz.uni.math.app.model.dao;
 import pl.lodz.uni.math.app.model.domain.Operation;
 
 public interface OperationDAO {
-	
+	/*
+	 * method adds new Operation to database, base on category object fields.
+	 */
 	public boolean addOperation(Operation operation);
-	
+	/*
+	 * method return Operation, base on id parameter.
+	 */
 	public Operation getOperation(int id);
-	
+	/*
+	 * method removes Operation from data base, base on operation object parameters.
+	 */
 	public boolean removeOperation(Operation operation);
-	
+	/*
+	 * method update row in database, base on operation object fields.
+	 */
 	public boolean updateOperation(Operation operation);
 }

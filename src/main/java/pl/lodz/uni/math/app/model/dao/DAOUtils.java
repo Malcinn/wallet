@@ -5,9 +5,9 @@ import java.sql.SQLException;
 
 public class DAOUtils {
 	
-	public static void setAutoCommitModeOnConnection(Connection connection) {
+	public static void setValueOfAutoCommitModeOnConnection(Connection connection, boolean value) {
 		try {
-			connection.setAutoCommit(false);
+			connection.setAutoCommit(value);
 		} catch (SQLException e) {
 			System.out.println(
 					"Error ocurred while, setting autocomit mode to false on the connection property. Message: "
