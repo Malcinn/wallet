@@ -16,11 +16,11 @@ import pl.lodz.uni.math.app.model.domain.Wallet;
 
 public class OperationDAOImplTest extends DAOTest {
 
-	private CategoryDAO categoryDAO = new CategoryDAOImpl(connection);
+	private CategoryDAO categoryDAO = new CategoryDAODatabaseImpl(connection);
 
-	private WalletDAO walletDAO = new WalletDAOImpl(connection);
+	private WalletDAO walletDAO = new WalletDAODatabaseImpl(connection);
 	
-	private OperationDAO operationDAO = new OperationDAOImpl(connection, categoryDAO, walletDAO);
+	private OperationDAO operationDAO = new OperationDAODatabaseImpl(connection, categoryDAO, walletDAO);
 
 	@Before
 	public void beforeTest() {

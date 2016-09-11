@@ -7,13 +7,13 @@ import java.sql.SQLException;
 
 import pl.lodz.uni.math.app.model.domain.Category;
 
-public class CategoryDAOImpl implements CategoryDAO {
+public class CategoryDAODatabaseImpl implements CategoryDAO {
 
 	private static final String CATEGORY = "Category";
 
 	private Connection connection = null;
 
-	public CategoryDAOImpl(Connection connection) {
+	public CategoryDAODatabaseImpl(Connection connection) {
 		this.connection = connection;
 		DAOUtils.setValueOfAutoCommitModeOnConnection(this.connection, false);
 	}

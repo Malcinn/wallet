@@ -15,7 +15,7 @@ public class WalletDAOImplTest extends DAOTest{
 
 	private static final String WALLET = "Wallet";
 	
-	private WalletDAO walletDAO = new WalletDAOImpl(connection);
+	private WalletDAO walletDAO = new WalletDAODatabaseImpl(connection);
 	
 	@Before
 	public void beforeTest() {

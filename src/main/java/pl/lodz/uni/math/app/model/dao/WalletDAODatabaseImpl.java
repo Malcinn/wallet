@@ -7,13 +7,13 @@ import java.sql.SQLException;
 
 import pl.lodz.uni.math.app.model.domain.Wallet;
 
-public class WalletDAOImpl implements WalletDAO{
+public class WalletDAODatabaseImpl implements WalletDAO{
 
 	private static final String WALLET = "Wallet";
 
 	private Connection connection = null;
 	
-	public WalletDAOImpl(Connection connection) {
+	public WalletDAODatabaseImpl(Connection connection) {
 		this.connection = connection;
 		DAOUtils.setValueOfAutoCommitModeOnConnection(connection, false);
 	}

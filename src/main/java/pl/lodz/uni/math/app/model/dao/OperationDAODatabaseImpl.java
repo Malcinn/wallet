@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import pl.lodz.uni.math.app.model.domain.Operation;
 import pl.lodz.uni.math.app.model.domain.OperationType;
 
-public class OperationDAOImpl implements OperationDAO {
+public class OperationDAODatabaseImpl implements OperationDAO {
 
 	private static final String OPERATION = "Operation";
 
@@ -18,7 +18,7 @@ public class OperationDAOImpl implements OperationDAO {
 
 	private WalletDAO walletDAO = null;
 
-	public OperationDAOImpl(Connection connection, CategoryDAO categoryDAO, WalletDAO walletDAO) {
+	public OperationDAODatabaseImpl(Connection connection, CategoryDAO categoryDAO, WalletDAO walletDAO) {
 		this.connection = connection;
 		this.categoryDAO = categoryDAO;
 		this.walletDAO = walletDAO;

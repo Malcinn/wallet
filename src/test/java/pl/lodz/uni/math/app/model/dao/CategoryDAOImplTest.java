@@ -10,7 +10,7 @@ import pl.lodz.uni.math.app.model.domain.Category;
 
 public class CategoryDAOImplTest extends DAOTest{
 	
-	private CategoryDAO categoryDAO = new CategoryDAOImpl(connection);
+	private CategoryDAO categoryDAO = new CategoryDAODatabaseImpl(connection);
 
 	@Before
 	public void beforeTest() {
