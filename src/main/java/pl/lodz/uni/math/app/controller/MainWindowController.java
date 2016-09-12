@@ -93,7 +93,8 @@ public class MainWindowController implements Initializable {
 			stage.show();
 			setActionOnOpenCloseStage(stage);
 		} catch (IOException e) {
-			log.error("Error ocurred while loads an object hierarchy from a FXML document. Message: " + e.getMessage());
+			log.error("Error ocurred while loads an object hierarchy from a FXML document. Message: " + e.getMessage()
+					+ " Cause: " + e.getCause());
 		}
 	}
 
