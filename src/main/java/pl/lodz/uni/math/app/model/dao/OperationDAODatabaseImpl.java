@@ -5,10 +5,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import pl.lodz.uni.math.app.model.domain.Operation;
 import pl.lodz.uni.math.app.model.domain.OperationType;
 
 public class OperationDAODatabaseImpl implements OperationDAO {
+
+	private static final Logger log = LogManager.getLogger(OperationDAODatabaseImpl.class);
 
 	private static final String OPERATION = "Operation";
 
@@ -42,7 +47,7 @@ public class OperationDAODatabaseImpl implements OperationDAO {
 				connection.commit();
 				return true;
 			} catch (SQLException e) {
-				System.out.println("Error ocurred in addOperation method. Message: " + e.getMessage());
+				log.error("Error ocurred in addOperation method. Message: " + e.getMessage());
 			}
 		}
 		return false;
@@ -68,7 +73,7 @@ public class OperationDAODatabaseImpl implements OperationDAO {
 			connection.commit();
 			return operation;
 		} catch (SQLException e) {
-			System.out.println("Error ocurred in getOperation method. Message" + e.getMessage());
+			log.error("Error ocurred in getOperation method. Message" + e.getMessage());
 		}
 		return null;
 	}
@@ -85,7 +90,7 @@ public class OperationDAODatabaseImpl implements OperationDAO {
 				connection.commit();
 				return ((result == 0) ? false : true);
 			} catch (SQLException e) {
-				System.out.println("Error ocurred in removeOperation method. Message: " + e.getMessage());
+				log.error("Error ocurred in removeOperation method. Message: " + e.getMessage());
 			}
 		}
 		return false;
@@ -95,8 +100,7 @@ public class OperationDAODatabaseImpl implements OperationDAO {
 	public boolean updateOperation(Operation operation) {
 		if (operation != null) {
 			String sql = "UPDATE " + OPERATION
-					+ " SET type=?, date=?, description=?, amount=?, category_id=?, wallet_id=? "
-					+ "WHERE id=?";
+					+ " SET type=?, date=?, description=?, amount=?, category_id=?, wallet_id=? " + "WHERE id=?";
 			try {
 				PreparedStatement statement = connection.prepareStatement(sql);
 				statement.setString(1, operation.getType().toString());
@@ -112,7 +116,7 @@ public class OperationDAODatabaseImpl implements OperationDAO {
 				connection.commit();
 				return (result == 0) ? false : true;
 			} catch (SQLException e) {
-				System.out.println("Error ocurred in updateOperation method. Message: " + e.getMessage());
+				log.error("Error ocurred in updateOperation method. Message: " + e.getMessage());
 			}
 		}
 		return false;

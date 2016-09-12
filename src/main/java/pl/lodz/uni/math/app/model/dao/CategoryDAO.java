@@ -1,5 +1,7 @@
 package pl.lodz.uni.math.app.model.dao;
 
+import java.util.List;
+
 import pl.lodz.uni.math.app.model.domain.Category;
 
 public interface CategoryDAO {
@@ -24,4 +26,8 @@ public interface CategoryDAO {
 	 * method Update row in database, base on category object fields.
 	 */
 	public boolean updateCategory(Category category);
+	/*
+	 *  method return list of categories.
+	 */
+	public List<Category> getCategories();
 }

@@ -10,6 +10,8 @@ import pl.lodz.uni.math.app.model.dao.factory.WalletDAOFactory;
 
 public class DAOFacade {
 
+	public static final DataSourceType DATA_SOURCE_TYPE = DataSourceType.DATABASE;
+	
 	private CategoryDAOFactory categoryDAOFactory = null;
 	
 	private WalletDAOFactory walletDAOFactory = null;

@@ -5,23 +5,28 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import pl.lodz.uni.math.app.model.domain.Wallet;
 
-public class WalletDAODatabaseImpl implements WalletDAO{
+public class WalletDAODatabaseImpl implements WalletDAO {
+
+	private static final Logger log = LogManager.getLogger(WalletDAODatabaseImpl.class);
 
 	private static final String WALLET = "Wallet";
 
 	private Connection connection = null;
-	
+
 	public WalletDAODatabaseImpl(Connection connection) {
 		this.connection = connection;
 		DAOUtils.setValueOfAutoCommitModeOnConnection(connection, false);
 	}
-	
+
 	@Override
 	public boolean addWallet(Wallet wallet) {
 		if (wallet != null) {
-			if (!(checkIfWalletExistInDatabase(wallet.getName()))){
+			if (!(checkIfWalletExistInDatabase(wallet.getName()))) {
 				String sql = "INSERT INTO " + WALLET + " VALUES (NULL, ?)";
 				PreparedStatement statement = null;
 				try {
@@ -32,7 +37,7 @@ public class WalletDAODatabaseImpl implements WalletDAO{
 					connection.commit();
 					return (result == 0) ? false : true;
 				} catch (SQLException e) {
-					System.out.println("Error ocurred in addWallet Method. Message: " + e.getMessage());
+					log.error("Error ocurred in addWallet Method. Message: " + e.getMessage());
 				}
 			}
 		}
@@ -53,7 +58,7 @@ public class WalletDAODatabaseImpl implements WalletDAO{
 			connection.commit();
 			return wallet;
 		} catch (SQLException e) {
-			System.out.println("Error ocurred in getCategory method. Message: " + e.getMessage());
+			log.error("Error ocurred in getCategory method. Message: " + e.getMessage());
 		}
 		return null;
 	}
@@ -73,7 +78,7 @@ public class WalletDAODatabaseImpl implements WalletDAO{
 			connection.commit();
 			return wallet;
 		} catch (SQLException e) {
-			System.out.println("Error ocurred in getWallet method. Message: " + e.getMessage());
+			log.error("Error ocurred in getWallet method. Message: " + e.getMessage());
 		}
 		return null;
 	}
@@ -111,12 +116,12 @@ public class WalletDAODatabaseImpl implements WalletDAO{
 				statement.close();
 				return (result == 0) ? false : true;
 			} catch (SQLException e) {
-				System.out.println("Error ocurred in updateCategory method. Message" + e.getMessage());
+				log.error("Error ocurred in updateCategory method. Message" + e.getMessage());
 			}
 		}
 		return false;
 	}
-	
+
 	private boolean checkIfWalletExistInDatabase(String name) {
 		String sql = "SELECT * FROM " + WALLET;
 		PreparedStatement statement = null;
@@ -128,8 +133,7 @@ public class WalletDAODatabaseImpl implements WalletDAO{
 					return true;
 			}
 		} catch (SQLException e) {
-			System.out.println(
-					"Error ocurred in checkIfWalletExistInDatabase method. Message: " + e.getMessage());
+			log.error("Error ocurred in checkIfWalletExistInDatabase method. Message: " + e.getMessage());
 		}
 		return false;
 	}

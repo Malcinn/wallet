@@ -2,6 +2,8 @@ package pl.lodz.uni.math.app.model.dao;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,4 +97,17 @@ public class CategoryDAOImplTest extends DAOTest{
 		assertFalse(result);
 	}
 	
+	@Test 
+	public void getCategoriesMethodGettingExistingCategories() {
+		categoryDAO.addCategory(new Category("testCategory"));
+		categoryDAO.addCategory(new Category("testCategory2"));
+		List<Category> categories = categoryDAO.getCategories();
+		assertTrue(categories.size() == 2);
+	}
+	
+	@Test 
+	public void getCategoriesMethodGettingNotExistingCategories() {
+		List<Category> categories = categoryDAO.getCategories();
+		assertTrue(categories != null);
+	}
 }

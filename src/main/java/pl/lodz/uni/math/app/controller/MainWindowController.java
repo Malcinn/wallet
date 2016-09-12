@@ -7,6 +7,9 @@ import java.net.URL;
 import java.util.MissingFormatArgumentException;
 import java.util.ResourceBundle;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -19,8 +22,11 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import pl.lodz.uni.math.app.model.dao.CategoryDAODatabaseImpl;
 
 public class MainWindowController implements Initializable {
+
+	private static final Logger log = LogManager.getLogger(MainWindowController.class);
 
 	private static final String CATEGORIES_WINDOW = "CategoriesWindow";
 
@@ -30,7 +36,7 @@ public class MainWindowController implements Initializable {
 
 	@FXML
 	VBox mainVBox;
-	
+
 	@FXML
 	Button addOperationButton;
 
@@ -62,14 +68,13 @@ public class MainWindowController implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				showWindow(event, CATEGORIES_WINDOW);
-				
+
 			}
 		});
 	}
 
 	private void walletsButtonActions() {
-		this.
-		walletsButton.setOnAction(new EventHandler<ActionEvent>() {
+		this.walletsButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				showWindow(event, WALLETS_WINDOW);
@@ -86,27 +91,20 @@ public class MainWindowController implements Initializable {
 			stage.setTitle(windowName);
 			stage.setScene(new Scene(root));
 			stage.show();
-			
-		/*	stage.setOnShown(new EventHandler<WindowEvent>() {
-
-				@Override
-				public void handle(WindowEvent event) {
-					mainVBox.setDisable(true);
-				}
-			});
-			stage.setOnHidden(new EventHandler<WindowEvent>() {
-				
-				@Override
-				public void handle(WindowEvent event) {
-					mainVBox.setDisable(false);
-				}
-			});*/
+			setActionOnOpenCloseStage(stage);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error ocurred while loads an object hierarchy from a FXML document. Message: " + e.getMessage());
 		}
 	}
-	
-	
-	
+
+	private void setActionOnOpenCloseStage(Stage stage) {
+		mainVBox.setDisable(!mainVBox.isDisable());
+		stage.setOnHidden(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				mainVBox.setDisable(!mainVBox.isDisable());
+			}
+		});
+	}
+
 }
