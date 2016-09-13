@@ -1,5 +1,7 @@
 package pl.lodz.uni.math.app.model.dao;
 
+import java.util.List;
+
 import pl.lodz.uni.math.app.model.domain.Operation;
 
 public interface OperationDAO {
@@ -19,4 +21,8 @@ public interface OperationDAO {
 	 * method update row in database, base on operation object fields.
 	 */
 	public boolean updateOperation(Operation operation);
+	/*
+	 * method return list of Operations.
+	 */
+	public List<Operation> getOperations();
 }

@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sql.StatementEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -120,6 +124,27 @@ public class OperationDAODatabaseImpl implements OperationDAO {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public List<Operation> getOperations() {
+		String sql = "SELECT * FROM " + OPERATION;
+		List<Operation> resultList = new ArrayList<>();
+		PreparedStatement statement = null;
+		try {
+			statement = connection.prepareStatement(sql);
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				resultList.add( new Operation(resultSet.getInt(1),
+						(resultSet.getString(2).equals(OperationType.IN.toString()) ? OperationType.IN
+								: OperationType.OUT),
+						resultSet.getDate(3), resultSet.getString(4), resultSet.getBigDecimal(5),
+						walletDAO.getWallet(resultSet.getInt(6)), categoryDAO.getCategory(resultSet.getInt(7))));
+			}
+		} catch (SQLException e) {
+			log.error("Error ocured in getOperaitons method. Message: " + e.getMessage());
+		}
+		return resultList;
 	}
 
 }

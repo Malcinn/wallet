@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -121,4 +122,27 @@ public class OperationDAOImplTest extends DAOTest {
 		assertFalse(result);
 	}
 	
+	@Test
+	public void getOperationsMethodGetNotEmptyOperationsList() {
+		Category category = new Category("testCategory");
+		categoryDAO.addCategory(category);
+		category = categoryDAO.getCategory(category.getName());
+		Wallet wallet = new Wallet("testWallet");
+		walletDAO.addWallet(wallet);
+		wallet = walletDAO.getWallet(wallet.getName());
+		Operation operation = new Operation(OperationType.IN, new Date(new java.util.Date().getTime()),
+				new String("testDescription"), new BigDecimal("54.2"), wallet, category);
+		operationDAO.addOperation(operation);
+		operation = new Operation(OperationType.IN, new Date(new java.util.Date().getTime()),
+				new String("testDescription2"), new BigDecimal("2354"), wallet, category);
+		operationDAO.addOperation(operation);
+		List<Operation> operations = operationDAO.getOperations();
+		assertEquals(2, operations.size());
+	}
+	
+	@Test
+	public void getOperationsMethodGetEmptyOperationsList() {
+		List<Operation> operations = operationDAO.getOperations();
+		assertEquals(0, operations.size());
+	}
 }
