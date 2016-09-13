@@ -110,4 +110,5 @@ public class CategoryDAOImplTest extends DAOTest{
 		List<Category> categories = categoryDAO.getCategories();
 		assertTrue(categories != null);
 	}
+
 }

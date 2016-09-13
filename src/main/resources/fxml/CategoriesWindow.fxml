@@ -11,6 +11,8 @@
             <Label fx:id="labelName" text="Name" />
             <TextField fx:id="textFieldName" />
           <Button fx:id="addButton" mnemonicParsing="false" text="Add" />
+            <Button fx:id="updateButton" mnemonicParsing="false" text="Update" />
+            <Button fx:id="removeButton" mnemonicParsing="false" text="Remove" />
         </items>
       </ToolBar>
       <TableView fx:id="tableView" editable="true" prefHeight="200.0" prefWidth="200.0">
@@ -18,5 +20,6 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
+      <Label fx:id="labelInfo" textFill="#d70d0d" />
    </children>
 </VBox>

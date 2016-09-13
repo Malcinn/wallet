@@ -18,6 +18,10 @@ public class CategoryDAODatabaseImpl implements CategoryDAO {
 
 	private static final String CATEGORY = "Category";
 
+	private static final String CATEGORY_ID = "category_id";
+
+	private static final String OPERATION = "Operation";
+
 	private Connection connection = null;
 
 	public CategoryDAODatabaseImpl(Connection connection) {
@@ -126,18 +130,20 @@ public class CategoryDAODatabaseImpl implements CategoryDAO {
 	@Override
 	public boolean updateCategory(Category category) {
 		if (category != null) {
-			String sql = "UPDATE " + CATEGORY + " SET name=? WHERE id=?";
-			PreparedStatement statement = null;
-			try {
-				statement = connection.prepareStatement(sql);
-				statement.setString(1, category.getName());
-				statement.setInt(2, category.getId());
-				int result = statement.executeUpdate();
-				connection.commit();
-				statement.close();
-				return (result == 0) ? false : true;
-			} catch (SQLException e) {
-				log.error("Error ocurred in updateCategory method. Message" + e.getMessage());
+			if (removeOperationFromOperationTableWhereCategoryIs(category)) {
+				String sql = "UPDATE " + CATEGORY + " SET name=? WHERE id=?";
+				PreparedStatement statement = null;
+				try {
+					statement = connection.prepareStatement(sql);
+					statement.setString(1, category.getName());
+					statement.setInt(2, category.getId());
+					int result = statement.executeUpdate();
+					connection.commit();
+					statement.close();
+					return (result == 0) ? false : true;
+				} catch (SQLException e) {
+					log.error("Error ocurred in updateCategory method. Message" + e.getMessage());
+				}
 			}
 		}
 		return false;
@@ -160,4 +166,25 @@ public class CategoryDAODatabaseImpl implements CategoryDAO {
 		return returnList;
 	}
 
+	/*
+	 * this method removes dependencies from Operation table.
+	 */
+	public boolean removeOperationFromOperationTableWhereCategoryIs(Category category) {
+		if (category != null) {
+			String sql = "DELETE FROM " + OPERATION + " WHERE " + CATEGORY_ID + "=?";
+			PreparedStatement statement = null;
+			try {
+				statement = connection.prepareStatement(sql);
+				statement.setInt(1, category.getId());
+				statement.executeUpdate();
+				statement.close();
+				connection.commit();
+				return true;
+			} catch (SQLException e) {
+				log.error("Error ocurred while removing operations from Operation table, base on category_id. Message: "
+						+ e.getMessage());
+			}
+		}
+		return false;
+	}
 }
