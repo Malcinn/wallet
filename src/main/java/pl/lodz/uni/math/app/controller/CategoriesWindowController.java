@@ -94,9 +94,14 @@ public class CategoriesWindowController implements Initializable {
 		addButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				categoryDAO.addCategory(new Category(textFieldName.getText().trim()));
-				updateTableViewData();
-				labelInfoSetText("");
+				String name = textFieldName.getText().trim();
+				if (!name.equals("")) {
+					categoryDAO.addCategory(new Category(textFieldName.getText().trim()));
+					updateTableViewData();
+					labelInfoSetText("");
+				}else {
+					labelInfoSetText("Bad name format");
+				}
 			}
 		});
 	}

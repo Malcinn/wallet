@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -92,5 +93,20 @@ public class WalletDAOImplTest extends DAOTest{
 	public void updateCategoryMethodWhenCategoryIsNullTest () {
 		boolean result = walletDAO.updateWallet(null);
 		assertFalse(result);
+	}
+	
+	@Test
+	public void getWalletsMethodGettingExistingWalletsList() {
+		walletDAO.addWallet(new Wallet("testWallet"));
+		walletDAO.addWallet(new Wallet("testWallet2"));
+		
+		List<Wallet> wallets = walletDAO.getWallets();
+		assertEquals(2, wallets.size());
+	}
+	
+	@Test
+	public void getWalletsMethodGettingEmptyWalletsList() {
+		List<Wallet> wallets = walletDAO.getWallets();
+		assertEquals(0, wallets.size());
 	}
 }

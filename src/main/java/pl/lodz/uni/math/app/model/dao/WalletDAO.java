@@ -1,5 +1,7 @@
 package pl.lodz.uni.math.app.model.dao;
 
+import java.util.List;
+
 import pl.lodz.uni.math.app.model.domain.Wallet;
 
 public interface WalletDAO {
@@ -24,4 +26,8 @@ public interface WalletDAO {
 	 * method update row in database, base on wallet object fields.
 	 */
 	public boolean updateWallet(Wallet wallet);
+	/*
+	 * method return list of Wallets.
+	 */
+	public List<Wallet> getWallets();
 }
