@@ -30,6 +30,8 @@ public class CategoriesWindowController implements Initializable {
 
 	private static final Logger log = LogManager.getLogger(CategoriesWindowController.class);
 
+	private static final String ID_COLUMN = "id";
+
 	private static final String NAME_COLUMN = "name";
 
 	private static final String INFO = "Not selected category.";
