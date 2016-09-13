@@ -21,9 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import pl.lodz.uni.math.app.model.dao.CategoryDAO;
 import pl.lodz.uni.math.app.model.dao.WalletDAO;
-import pl.lodz.uni.math.app.model.domain.Category;
 import pl.lodz.uni.math.app.model.domain.Wallet;
 import pl.lodz.uni.math.app.model.services.DAOFacade;
 

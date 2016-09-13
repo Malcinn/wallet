@@ -17,6 +17,8 @@ public class WalletDAODatabaseImpl implements WalletDAO {
 
 	private static final Logger log = LogManager.getLogger(WalletDAODatabaseImpl.class);
 
+	private static final String OPERATION = "Operation";
+	
 	private static final String WALLET = "Wallet";
 
 	private static final String WALLET_ID = "wallet_id";
@@ -167,7 +169,7 @@ public class WalletDAODatabaseImpl implements WalletDAO {
 	 */
 	private boolean removeOperationFromOperationTableWhereWalletIs(Wallet wallet) {
 		if (wallet != null) {
-			String sql = "DELETE FROM " + WALLET + " WHERE " + WALLET_ID + "=?";
+			String sql = "DELETE FROM " + OPERATION + " WHERE " + WALLET_ID + "=?";
 			PreparedStatement statement = null;
 			try {
 				statement = connection.prepareStatement(sql);

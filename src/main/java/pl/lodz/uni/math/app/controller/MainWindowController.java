@@ -68,7 +68,6 @@ public class MainWindowController implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				showWindow(event, CATEGORIES_WINDOW);
-
 			}
 		});
 	}
