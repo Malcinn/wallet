@@ -3,7 +3,13 @@ package pl.lodz.uni.math.app.controller;
 import static java.io.File.separator;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +28,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -28,10 +36,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import pl.lodz.uni.math.app.model.dao.CategoryDAO;
 import pl.lodz.uni.math.app.model.dao.OperationDAO;
 import pl.lodz.uni.math.app.model.dao.WalletDAO;
+import pl.lodz.uni.math.app.model.domain.Category;
 import pl.lodz.uni.math.app.model.domain.Operation;
+import pl.lodz.uni.math.app.model.domain.OperationType;
+import pl.lodz.uni.math.app.model.domain.Wallet;
 import pl.lodz.uni.math.app.model.services.DAOFacade;
+
+import static pl.lodz.uni.math.app.controller.util.MainWindowControllerValidator.*;
 
 public class MainWindowController implements Initializable {
 
@@ -56,6 +70,7 @@ public class MainWindowController implements Initializable {
 	private static final String CATEGORY_COLUMN = "category";
 
 	private static final String WALLET_COLUMN = "wallet";
+
 	@FXML
 	VBox mainVBox;
 
@@ -72,31 +87,46 @@ public class MainWindowController implements Initializable {
 	VBox rightVBox;
 
 	@FXML
-	TableView operationsTableView;
+	TableView<Operation> operationsTableView;
 
 	@FXML
 	VBox leftTopVBox;
 
 	@FXML
-	TextField idTextField;
+	ComboBox<OperationType> typeComboBox;
 
 	@FXML
-	ComboBox typeComboBox;
+	Label typeLabelInfo;
 
 	@FXML
-	DatePicker deteDatePicker;
+	DatePicker dateDatePicker;
+
+	@FXML
+	Label dateLabelInfo;
 
 	@FXML
 	TextField descriptionTextField;
 
 	@FXML
+	Label descriptionLabelInfo;
+
+	@FXML
 	TextField amountTextField;
 
 	@FXML
-	ComboBox categoryComboBox;
+	Label amountLabelInfo;
 
 	@FXML
-	ComboBox walletComboBox;
+	ComboBox<String> categoryComboBox;
+
+	@FXML
+	Label categoryLabelInfo;
+
+	@FXML
+	ComboBox<String> walletComboBox;
+
+	@FXML
+	Label walletLabelInfo;
 
 	@FXML
 	Button addButton;
@@ -114,10 +144,48 @@ public class MainWindowController implements Initializable {
 
 	private OperationDAO operationDAO = daoFacade.getOperationDAO(DAOFacade.DATA_SOURCE_TYPE);
 
+	private CategoryDAO categoryDAO = daoFacade.getCategoryDAO(DAOFacade.DATA_SOURCE_TYPE);
+
+	private WalletDAO walletDAO = daoFacade.getWalletDAO(DAOFacade.DATA_SOURCE_TYPE);
+
 	public void initialize(URL location, ResourceBundle resources) {
+		updateDataInLeftTopVBox();
 		updateOperationsTableView();
 		categoriesButtonActions();
 		walletsButtonActions();
+		addButtonActions();
+		updateButtonActions();
+		removeButtonActions();
+		addOnClickActionOnTableViewRow();
+	}
+
+	private void updateDataInLeftTopVBox() {
+		updateTypeComboBox();
+		updateCategoryComboBox();
+		updateWalletComboBox();
+	}
+
+	private void updateTypeComboBox() {
+		typeComboBox.getItems().clear();
+		typeComboBox.getItems().addAll(OperationType.IN, OperationType.OUT);
+	}
+
+	private void updateCategoryComboBox() {
+		categoryComboBox.getItems().clear();
+		List<String> categoriesNames = new ArrayList<>();
+		for (Category category : categoryDAO.getCategories()) {
+			categoriesNames.add(category.getName());
+		}
+		categoryComboBox.getItems().addAll(categoriesNames);
+	}
+
+	private void updateWalletComboBox() {
+		walletComboBox.getItems().clear();
+		List<String> walletsNames = new ArrayList<>();
+		for (Wallet wallet : walletDAO.getWallets()) {
+			walletsNames.add(wallet.getName());
+		}
+		walletComboBox.getItems().addAll(walletsNames);
 	}
 
 	private void updateOperationsTableView() {
@@ -138,8 +206,9 @@ public class MainWindowController implements Initializable {
 		categoryTableColumn.setCellValueFactory(new PropertyValueFactory(CATEGORY_COLUMN));
 		operationsTableView.getColumns().addAll(idTableColumn, typeTableColumn, dateTableColumn, descriptionTableColumn,
 				amountTableColumn, walletTableColumn, categoryTableColumn);
-		
-		ObservableList<Operation> operationsObservableList = FXCollections.observableArrayList(operationDAO.getOperations());
+
+		ObservableList<Operation> operationsObservableList = FXCollections
+				.observableArrayList(operationDAO.getOperations());
 	}
 
 	private void categoriesButtonActions() {
@@ -158,6 +227,74 @@ public class MainWindowController implements Initializable {
 				showWindow(event, WALLETS_WINDOW);
 			}
 		});
+	}
+
+	private void addButtonActions() {
+		addButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if (checkDataInLeftTopVBox()) {
+					LocalDate localDate = dateDatePicker.getValue();
+					if (checkDataInLeftTopVBox()) {
+						operationDAO.addOperation(new Operation(typeComboBox.getValue(),
+								new Date(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth()),
+								descriptionTextField.getText().trim(), new BigDecimal(amountTextField.getText().trim()),
+								walletDAO.getWallet(walletComboBox.getValue()),
+								categoryDAO.getCategory(categoryComboBox.getValue())));
+						updateOperationsTableView();
+					}
+				}
+			}
+		});
+	}
+
+	protected boolean checkDataInLeftTopVBox() {
+		return checkDataInComboBox(typeComboBox, typeLabelInfo) && checkDataInDatePicker(dateDatePicker, dateLabelInfo)
+				&& checkDataInTextField(descriptionTextField, descriptionLabelInfo)
+				&& checkDataInTextFieldAsBigDecimal(amountTextField, amountLabelInfo)
+				&& checkDataInComboBox(categoryComboBox, categoryLabelInfo)
+				&& checkDataInComboBox(walletComboBox, walletLabelInfo);
+	}
+
+	private void updateButtonActions() {
+		updateButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+			}
+		});
+	}
+
+	private void removeButtonActions() {
+		removeButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+			}
+		});
+	}
+
+	private void addOnClickActionOnTableViewRow() {
+		operationsTableView.setOnMouseReleased(new EventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				Operation operation = getCurrentSelectedOperationFromTableView();
+				/*
+				 * try { textFieldName.setText(category.getName());
+				 * labelInfoSetText(""); } catch (NullPointerException e) {
+				 * labelInfoSetText(INFO); log.error(
+				 * "No category to select. Message: " + e.getMessage()); }
+				 */
+			}
+		});
+	}
+
+	private Operation getCurrentSelectedOperationFromTableView() {
+		try {
+			Operation operation = (Operation) operationsTableView.getSelectionModel().getSelectedItem();
+			return operation;
+		} catch (Exception e) {
+			log.error("Error ocurred while gettin current selected item from tableView. Message: " + e.getMessage());
+		}
+		return null;
 	}
 
 	public void showWindow(ActionEvent event, String windowName) {
@@ -182,6 +319,7 @@ public class MainWindowController implements Initializable {
 			@Override
 			public void handle(WindowEvent event) {
 				mainVBox.setDisable(!mainVBox.isDisable());
+				updateDataInLeftTopVBox();
 			}
 		});
 	}
