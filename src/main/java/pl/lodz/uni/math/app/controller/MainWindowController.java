@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.sql.Date;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class MainWindowController implements Initializable {
 
 	private static final String WALLET_COLUMN = "wallet";
 
+	private static final String LABEL_INFO = "No selected operation.";
 	@FXML
 	VBox mainVBox;
 
@@ -92,6 +94,9 @@ public class MainWindowController implements Initializable {
 
 	@FXML
 	TableView<OperationTableView> operationsTableView;
+
+	@FXML
+	Label labelInfo;
 
 	@FXML
 	VBox leftTopVBox;
@@ -153,7 +158,7 @@ public class MainWindowController implements Initializable {
 	private WalletDAO walletDAO = daoFacade.getWalletDAO(DAOFacade.DATA_SOURCE_TYPE);
 
 	public void initialize(URL location, ResourceBundle resources) {
-		updateDataInLeftTopVBox();
+		updateDataInLeftTopVBox(null, null, null, null, null, null);
 		updateOperationsTableView();
 		categoriesButtonActions();
 		walletsButtonActions();
@@ -163,33 +168,43 @@ public class MainWindowController implements Initializable {
 		addOnClickActionOnTableViewRow();
 	}
 
-	private void updateDataInLeftTopVBox() {
-		updateTypeComboBox();
-		updateCategoryComboBox();
-		updateWalletComboBox();
+	private void updateDataInLeftTopVBox(OperationType operationType, Date date, String description, String amount,
+			String category, String wallet) {
+		updateTypeComboBox(operationType);
+		dateDatePicker.setValue(null);
+		descriptionTextField.setText(description);
+		amountTextField.setText(amount);
+		updateCategoryComboBox(category);
+		updateWalletComboBox(wallet);
 	}
 
-	private void updateTypeComboBox() {
+	private void updateTypeComboBox(OperationType operationType) {
 		typeComboBox.getItems().clear();
 		typeComboBox.getItems().addAll(OperationType.IN, OperationType.OUT);
+		if (operationType != null)
+			typeComboBox.setValue(operationType);
 	}
 
-	private void updateCategoryComboBox() {
+	private void updateCategoryComboBox(String categoryName) {
 		categoryComboBox.getItems().clear();
 		List<String> categoriesNames = new ArrayList<>();
 		for (Category category : categoryDAO.getCategories()) {
 			categoriesNames.add(category.getName());
 		}
 		categoryComboBox.getItems().addAll(categoriesNames);
+		if (categoryName != null && !categoriesNames.equals(""))
+			categoryComboBox.setValue(categoryName);
 	}
 
-	private void updateWalletComboBox() {
+	private void updateWalletComboBox(String walletName) {
 		walletComboBox.getItems().clear();
 		List<String> walletsNames = new ArrayList<>();
 		for (Wallet wallet : walletDAO.getWallets()) {
 			walletsNames.add(wallet.getName());
 		}
 		walletComboBox.getItems().addAll(walletsNames);
+		if (walletName != null && !walletName.equals(""))
+			walletComboBox.setValue(walletName);
 	}
 
 	private void updateOperationsTableView() {
@@ -208,17 +223,21 @@ public class MainWindowController implements Initializable {
 		walletTableColumn.setCellValueFactory(new PropertyValueFactory("walletName"));
 		TableColumn categoryTableColumn = new TableColumn(CATEGORY_COLUMN);
 		categoryTableColumn.setCellValueFactory(new PropertyValueFactory("categoryName"));
-		
+
 		operationsTableView.getColumns().addAll(idTableColumn, typeTableColumn, dateTableColumn, descriptionTableColumn,
 				amountTableColumn, categoryTableColumn, walletTableColumn);
 
-		List<OperationTableView> operations = new ArrayList<>();
+		ObservableList<OperationTableView> operationsTableViewObservableList = FXCollections
+				.observableArrayList(getOperationTablewViewListFromOperationsList(operationDAO.getOperations()));
+		operationsTableView.setItems(operationsTableViewObservableList);
+	}
+
+	private List<OperationTableView> getOperationTablewViewListFromOperationsList(List<Operation> operations) {
+		List<OperationTableView> resultList = new ArrayList<>();
 		for (Operation operation : operationDAO.getOperations()) {
-			operations.add(new OperationTableView(operation));
+			resultList.add(new OperationTableView(operation));
 		}
-		ObservableList<OperationTableView> operationsObservableList = FXCollections
-				.observableArrayList(operations);
-		operationsTableView.setItems(operationsObservableList);
+		return resultList;
 	}
 
 	private void categoriesButtonActions() {
@@ -270,6 +289,17 @@ public class MainWindowController implements Initializable {
 		updateButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				Operation operation = getCurrentSelectedOperationFromTableView();
+				if (checkDataInLeftTopVBox()) {
+					/*operation.setType(typeComboBox.getValue());
+					operation.setDate();*/
+					if (operationDAO.updateOperation(operation)) {
+						labelInfo.setText("");
+						updateOperationsTableView();
+					} else {
+						labelInfo.setText(LABEL_INFO);
+					}
+				}
 			}
 		});
 	}
@@ -278,6 +308,13 @@ public class MainWindowController implements Initializable {
 		removeButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				Operation operation = getCurrentSelectedOperationFromTableView();
+				if (operationDAO.removeOperation(operation)) {
+					labelInfo.setText("");
+					updateOperationsTableView();
+				} else {
+					labelInfo.setText(LABEL_INFO);
+				}
 			}
 		});
 	}
@@ -286,13 +323,15 @@ public class MainWindowController implements Initializable {
 		operationsTableView.setOnMouseReleased(new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
-				Operation operation = getCurrentSelectedOperationFromTableView();
-				/*
-				 * try { textFieldName.setText(category.getName());
-				 * labelInfoSetText(""); } catch (NullPointerException e) {
-				 * labelInfoSetText(INFO); log.error(
-				 * "No category to select. Message: " + e.getMessage()); }
-				 */
+				try {
+					Operation operation = getCurrentSelectedOperationFromTableView();
+					updateDataInLeftTopVBox(operation.getType(), operation.getDate(), operation.getDescription(),
+							operation.getAmount().toString(), operation.getCategory().getName(),
+							operation.getWallet().getName());
+				} catch (NullPointerException e) {
+					log.error("No category to select. Message: " + e.getMessage());
+				}
+
 			}
 		});
 	}
@@ -329,7 +368,7 @@ public class MainWindowController implements Initializable {
 			@Override
 			public void handle(WindowEvent event) {
 				mainVBox.setDisable(!mainVBox.isDisable());
-				updateDataInLeftTopVBox();
+				updateDataInLeftTopVBox(null, null, null, null, null, null);
 			}
 		});
 	}
