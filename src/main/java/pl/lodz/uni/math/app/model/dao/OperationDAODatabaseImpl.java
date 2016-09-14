@@ -70,7 +70,7 @@ public class OperationDAODatabaseImpl implements OperationDAO {
 						(resultSet.getString(2).equals(OperationType.IN.toString()) ? OperationType.IN
 								: OperationType.OUT),
 						resultSet.getDate(3), resultSet.getString(4), resultSet.getBigDecimal(5),
-						walletDAO.getWallet(resultSet.getInt(6)), categoryDAO.getCategory(resultSet.getInt(7)));
+						categoryDAO.getCategory(resultSet.getInt(7)), walletDAO.getWallet(resultSet.getInt(6)));
 			}
 			resultSet.close();
 			statement.close();
@@ -139,7 +139,7 @@ public class OperationDAODatabaseImpl implements OperationDAO {
 						(resultSet.getString(2).equals(OperationType.IN.toString()) ? OperationType.IN
 								: OperationType.OUT),
 						resultSet.getDate(3), resultSet.getString(4), resultSet.getBigDecimal(5),
-						walletDAO.getWallet(resultSet.getInt(6)), categoryDAO.getCategory(resultSet.getInt(7))));
+						categoryDAO.getCategory(resultSet.getInt(6)), walletDAO.getWallet(resultSet.getInt(7))));
 			}
 		} catch (SQLException e) {
 			log.error("Error ocured in getOperaitons method. Message: " + e.getMessage());

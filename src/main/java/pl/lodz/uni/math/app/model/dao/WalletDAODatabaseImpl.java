@@ -65,7 +65,7 @@ public class WalletDAODatabaseImpl implements WalletDAO {
 			connection.commit();
 			return wallet;
 		} catch (SQLException e) {
-			log.error("Error ocurred in getCategory method. Message: " + e.getMessage());
+			log.error("Error ocurred in getWallet method. Message: " + e.getMessage());
 		}
 		return null;
 	}

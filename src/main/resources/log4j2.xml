@@ -6,7 +6,7 @@
 
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
-			<PatternLayout pattern="[%t] %p %c.%M() - %m%n" />
+			<PatternLayout pattern="[%p] %d [%t] %x %c %M - %m%n" />
 		</Console>
 	</Appenders>
 

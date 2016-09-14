@@ -239,8 +239,8 @@ public class MainWindowController implements Initializable {
 						operationDAO.addOperation(new Operation(typeComboBox.getValue(),
 								new Date(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth()),
 								descriptionTextField.getText().trim(), new BigDecimal(amountTextField.getText().trim()),
-								walletDAO.getWallet(walletComboBox.getValue()),
-								categoryDAO.getCategory(categoryComboBox.getValue())));
+								categoryDAO.getCategory(categoryComboBox.getValue()),
+								walletDAO.getWallet(walletComboBox.getValue())));
 						updateOperationsTableView();
 					}
 				}

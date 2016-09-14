@@ -6,24 +6,24 @@ import java.sql.Date;
 public class Operation {
 
 	private int id;
-	
+
 	private OperationType type = null;
-	
+
 	private Date date = null;
-	
+
 	private String description = null;
-	
+
 	private BigDecimal amount = null;
-	
+
 	private Wallet wallet = null;
-	
+
 	private Category category = null;
 
 	public Operation() {
 	}
 
-	public Operation(OperationType type, Date date, String description, BigDecimal amount, Wallet wallet,
-			Category category) {
+	public Operation(OperationType type, Date date, String description, BigDecimal amount, Category category,
+			Wallet wallet) {
 		this.type = type;
 		this.date = date;
 		this.description = description;
@@ -31,9 +31,9 @@ public class Operation {
 		this.wallet = wallet;
 		this.category = category;
 	}
-	
-	public Operation(int id, OperationType type, Date date, String description, BigDecimal amount, Wallet wallet,
-			Category category) {
+
+	public Operation(int id, OperationType type, Date date, String description, BigDecimal amount, Category category,
+			Wallet wallet) {
 		this.id = id;
 		this.type = type;
 		this.date = date;
@@ -98,5 +98,5 @@ public class Operation {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
-		
+
 }
