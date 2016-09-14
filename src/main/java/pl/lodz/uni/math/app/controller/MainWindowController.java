@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -29,6 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -36,6 +38,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
+import pl.lodz.uni.math.app.controller.util.OperationTableView;
 import pl.lodz.uni.math.app.model.dao.CategoryDAO;
 import pl.lodz.uni.math.app.model.dao.OperationDAO;
 import pl.lodz.uni.math.app.model.dao.WalletDAO;
@@ -87,7 +91,7 @@ public class MainWindowController implements Initializable {
 	VBox rightVBox;
 
 	@FXML
-	TableView<Operation> operationsTableView;
+	TableView<OperationTableView> operationsTableView;
 
 	@FXML
 	VBox leftTopVBox;
@@ -201,14 +205,20 @@ public class MainWindowController implements Initializable {
 		TableColumn amountTableColumn = new TableColumn(AMOUNT_COLUMN);
 		amountTableColumn.setCellValueFactory(new PropertyValueFactory(AMOUNT_COLUMN));
 		TableColumn walletTableColumn = new TableColumn(WALLET_COLUMN);
-		walletTableColumn.setCellValueFactory(new PropertyValueFactory(WALLET_COLUMN));
+		walletTableColumn.setCellValueFactory(new PropertyValueFactory("walletName"));
 		TableColumn categoryTableColumn = new TableColumn(CATEGORY_COLUMN);
-		categoryTableColumn.setCellValueFactory(new PropertyValueFactory(CATEGORY_COLUMN));
+		categoryTableColumn.setCellValueFactory(new PropertyValueFactory("categoryName"));
+		
 		operationsTableView.getColumns().addAll(idTableColumn, typeTableColumn, dateTableColumn, descriptionTableColumn,
-				amountTableColumn, walletTableColumn, categoryTableColumn);
+				amountTableColumn, categoryTableColumn, walletTableColumn);
 
-		ObservableList<Operation> operationsObservableList = FXCollections
-				.observableArrayList(operationDAO.getOperations());
+		List<OperationTableView> operations = new ArrayList<>();
+		for (Operation operation : operationDAO.getOperations()) {
+			operations.add(new OperationTableView(operation));
+		}
+		ObservableList<OperationTableView> operationsObservableList = FXCollections
+				.observableArrayList(operations);
+		operationsTableView.setItems(operationsObservableList);
 	}
 
 	private void categoriesButtonActions() {
