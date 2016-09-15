@@ -71,7 +71,7 @@ public class MainWindowRightVboxController {
 		addOnClickActionOnTableViewRow();
 	}
 
-	public void updateTableViewData() {
+	private void tableViewSetColumns () {
 		tableView.getColumns().clear();
 		TableColumn idTableColumn = new TableColumn(ID_COLUMN_NAME);
 		idTableColumn.setCellValueFactory(new PropertyValueFactory(ID_COLUMN_NAME));
@@ -90,14 +90,17 @@ public class MainWindowRightVboxController {
 
 		tableView.getColumns().addAll(idTableColumn, typeTableColumn, dateTableColumn, descriptionTableColumn,
 				amountTableColumn, categoryTableColumn, walletTableColumn);
-
+	}
+	
+	public void updateTableViewData() {
+		tableViewSetColumns();
 		ObservableList<OperationTableView> operationsTableViewObservableList = FXCollections
 				.observableArrayList(getOperationTablewViewListFromOperationsList(operationDAO.getOperations()));
 		tableView.setItems(operationsTableViewObservableList);
 
 		updateResultsLabel();
 	}
-
+	
 	private List<OperationTableView> getOperationTablewViewListFromOperationsList(List<Operation> operations) {
 		List<OperationTableView> resultList = new ArrayList<>();
 		for (Operation operation : operationDAO.getOperations()) {
