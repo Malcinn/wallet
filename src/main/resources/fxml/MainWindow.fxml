@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.*?>
@@ -171,7 +172,13 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <HBox VBox.vgrow="ALWAYS" />
+                        <HBox>
+                           <children>
+                              <Label fx:id="resultsLabel" textFill="#219723">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font></Label>
+                           </children></HBox>
                         <HBox>
                            <children>
                               <Label fx:id="labelInfo" textFill="#ee0606" />

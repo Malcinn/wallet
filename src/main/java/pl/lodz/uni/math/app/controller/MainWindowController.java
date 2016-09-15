@@ -37,9 +37,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
+import pl.lodz.uni.math.app.controller.util.DateUtils;
 import pl.lodz.uni.math.app.controller.util.OperationTableView;
 import pl.lodz.uni.math.app.model.dao.CategoryDAO;
 import pl.lodz.uni.math.app.model.dao.OperationDAO;
@@ -94,6 +97,9 @@ public class MainWindowController implements Initializable {
 
 	@FXML
 	TableView<OperationTableView> operationsTableView;
+
+	@FXML
+	Label resultsLabel;
 
 	@FXML
 	Label labelInfo;
@@ -171,7 +177,7 @@ public class MainWindowController implements Initializable {
 	private void updateDataInLeftTopVBox(OperationType operationType, Date date, String description, String amount,
 			String category, String wallet) {
 		updateTypeComboBox(operationType);
-		dateDatePicker.setValue(null);
+		dateDatePicker.setValue(DateUtils.javaSqlDateToLocalDate(date));
 		descriptionTextField.setText(description);
 		amountTextField.setText(amount);
 		updateCategoryComboBox(category);
@@ -230,6 +236,28 @@ public class MainWindowController implements Initializable {
 		ObservableList<OperationTableView> operationsTableViewObservableList = FXCollections
 				.observableArrayList(getOperationTablewViewListFromOperationsList(operationDAO.getOperations()));
 		operationsTableView.setItems(operationsTableViewObservableList);
+
+		updateResultsLabel();
+	}
+
+	private void updateResultsLabel() {
+		BigDecimal outcome = new BigDecimal(0);
+		BigDecimal income = new BigDecimal(0);
+		BigDecimal sum = null;
+		for (Operation operation : operationDAO.getOperations()) {
+			if (operation.getType().equals(OperationType.IN))
+				income = income.add(operation.getAmount());
+			if (operation.getType().equals(OperationType.OUT))
+				outcome = outcome.add(operation.getAmount());
+		}
+		sum = income.subtract(outcome);
+		if (sum.compareTo(new BigDecimal(0)) == -1)
+			resultsLabel.setTextFill(Color.RED);
+		else
+			resultsLabel.setTextFill(Color.GREEN);
+		
+		resultsLabel
+				.setText("income: " + income.toString() + " outcome: " + outcome.toString() + " sum: " + sum.toString());
 	}
 
 	private List<OperationTableView> getOperationTablewViewListFromOperationsList(List<Operation> operations) {
@@ -266,7 +294,7 @@ public class MainWindowController implements Initializable {
 					LocalDate localDate = dateDatePicker.getValue();
 					if (checkDataInLeftTopVBox()) {
 						operationDAO.addOperation(new Operation(typeComboBox.getValue(),
-								new Date(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth()),
+								DateUtils.localDateToJavaSqlDate(dateDatePicker.getValue()),
 								descriptionTextField.getText().trim(), new BigDecimal(amountTextField.getText().trim()),
 								categoryDAO.getCategory(categoryComboBox.getValue()),
 								walletDAO.getWallet(walletComboBox.getValue())));
@@ -291,8 +319,7 @@ public class MainWindowController implements Initializable {
 			public void handle(ActionEvent event) {
 				Operation operation = getCurrentSelectedOperationFromTableView();
 				if (checkDataInLeftTopVBox()) {
-					/*operation.setType(typeComboBox.getValue());
-					operation.setDate();*/
+					updateOperationData(operation);
 					if (operationDAO.updateOperation(operation)) {
 						labelInfo.setText("");
 						updateOperationsTableView();
@@ -302,6 +329,15 @@ public class MainWindowController implements Initializable {
 				}
 			}
 		});
+	}
+
+	private void updateOperationData(Operation operation) {
+		operation.setType(typeComboBox.getValue());
+		operation.setDescription(descriptionTextField.getText());
+		operation.setAmount(new BigDecimal(amountTextField.getText()));
+		operation.setDate(DateUtils.localDateToJavaSqlDate(dateDatePicker.getValue()));
+		operation.setCategory(categoryDAO.getCategory(categoryComboBox.getValue()));
+		operation.setWallet(walletDAO.getWallet(walletComboBox.getValue()));
 	}
 
 	private void removeButtonActions() {
@@ -328,7 +364,9 @@ public class MainWindowController implements Initializable {
 					updateDataInLeftTopVBox(operation.getType(), operation.getDate(), operation.getDescription(),
 							operation.getAmount().toString(), operation.getCategory().getName(),
 							operation.getWallet().getName());
+					labelInfo.setText("");
 				} catch (NullPointerException e) {
+					labelInfo.setText(LABEL_INFO);
 					log.error("No category to select. Message: " + e.getMessage());
 				}
 
@@ -368,6 +406,7 @@ public class MainWindowController implements Initializable {
 			@Override
 			public void handle(WindowEvent event) {
 				mainVBox.setDisable(!mainVBox.isDisable());
+				updateOperationsTableView();
 				updateDataInLeftTopVBox(null, null, null, null, null, null);
 			}
 		});

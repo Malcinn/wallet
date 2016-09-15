@@ -111,17 +111,19 @@ public class CategoryDAODatabaseImpl implements CategoryDAO {
 	@Override
 	public boolean removeCategory(Category category) {
 		if (category != null) {
-			String sql = "DELETE FROM " + CATEGORY + " WHERE id=?";
-			PreparedStatement statement = null;
-			try {
-				statement = connection.prepareStatement(sql);
-				statement.setInt(1, category.getId());
-				int result = statement.executeUpdate();
-				statement.close();
-				connection.commit();
-				return (result == 0) ? false : true;
-			} catch (SQLException e) {
-				log.error("Error ocurred in removeCategory method. Message: " + e.getMessage());
+			if (removeOperationFromOperationTableWhereCategoryIs(category)) {
+				String sql = "DELETE FROM " + CATEGORY + " WHERE id=?";
+				PreparedStatement statement = null;
+				try {
+					statement = connection.prepareStatement(sql);
+					statement.setInt(1, category.getId());
+					int result = statement.executeUpdate();
+					statement.close();
+					connection.commit();
+					return (result == 0) ? false : true;
+				} catch (SQLException e) {
+					log.error("Error ocurred in removeCategory method. Message: " + e.getMessage());
+				}
 			}
 		}
 		return false;
@@ -130,20 +132,18 @@ public class CategoryDAODatabaseImpl implements CategoryDAO {
 	@Override
 	public boolean updateCategory(Category category) {
 		if (category != null) {
-			if (removeOperationFromOperationTableWhereCategoryIs(category)) {
-				String sql = "UPDATE " + CATEGORY + " SET name=? WHERE id=?";
-				PreparedStatement statement = null;
-				try {
-					statement = connection.prepareStatement(sql);
-					statement.setString(1, category.getName());
-					statement.setInt(2, category.getId());
-					int result = statement.executeUpdate();
-					connection.commit();
-					statement.close();
-					return (result == 0) ? false : true;
-				} catch (SQLException e) {
-					log.error("Error ocurred in updateCategory method. Message" + e.getMessage());
-				}
+			String sql = "UPDATE " + CATEGORY + " SET name=? WHERE id=?";
+			PreparedStatement statement = null;
+			try {
+				statement = connection.prepareStatement(sql);
+				statement.setString(1, category.getName());
+				statement.setInt(2, category.getId());
+				int result = statement.executeUpdate();
+				connection.commit();
+				statement.close();
+				return (result == 0) ? false : true;
+			} catch (SQLException e) {
+				log.error("Error ocurred in updateCategory method. Message" + e.getMessage());
 			}
 		}
 		return false;

@@ -55,6 +55,7 @@ public class MainWindowControllerValidator {
 				try {
 					value = value.replace(',', '.');
 					BigDecimal b = new BigDecimal(value);
+					textField.setText(value);
 					label.setText(EMPTY_STRING);
 					return true;
 				} catch (NumberFormatException e) {
