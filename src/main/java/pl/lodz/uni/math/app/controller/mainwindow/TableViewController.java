@@ -37,7 +37,7 @@ public class TableViewController {
 
 	private static final String WALLET_COLUMN_NAME = "wallet";
 
-	private static final String WALLET_PROPERTY_NAME = "waletName";
+	private static final String WALLET_PROPERTY_NAME = "walletName";
 
 	private static final String CATEGORY_COLUMN_NAME = "category";
 
