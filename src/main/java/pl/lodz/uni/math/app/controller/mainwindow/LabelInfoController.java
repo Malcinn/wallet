@@ -14,5 +14,9 @@ public class LabelInfoController {
 	public void update(String text) {
 		labelInfo.setText(text);
 	}
+	
+	public Label getLabelInfo() {
+		return labelInfo;
+	}
 
 }

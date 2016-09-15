@@ -17,12 +17,17 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import pl.lodz.uni.math.app.controller.util.MainWindowControllerFinalVariables;
+import pl.lodz.uni.math.app.model.domain.QueryParameters;
 
 public class ToolBarController {
 
 	private static final Logger log = LogManager.getLogger(ToolBarController.class);
 
 	private VBox mainVBox;
+
+	private Button searchButton;
+
+	private Button resetButton;
 
 	private Button categoriesButton;
 
@@ -32,20 +37,28 @@ public class ToolBarController {
 
 	private InputDataController inputDataController = null;
 
-	public ToolBarController(VBox mainVBox, Button categoriesButton, Button walletsButton,
-			TableViewController tableViewController, InputDataController inputDataController) {
+	private SearchController searchController = null;
+
+	public ToolBarController(VBox mainVBox, Button searchButton, Button resetButton, Button categoriesButton,
+			Button walletsButton, TableViewController tableViewController, InputDataController inputDataController,
+			SearchController searchController) {
 		super();
 		this.mainVBox = mainVBox;
+		this.searchButton = searchButton;
+		this.resetButton = resetButton;
 		this.categoriesButton = categoriesButton;
 		this.walletsButton = walletsButton;
 		this.tableViewController = tableViewController;
 		this.inputDataController = inputDataController;
+		this.searchController = searchController;
 		initalize();
 	}
 
 	private void initalize() {
 		categoriesButtonActions();
 		walletsButtonActions();
+		searchButtonActions();
+		resetButtonActions();
 	}
 
 	private void categoriesButtonActions() {
@@ -66,6 +79,24 @@ public class ToolBarController {
 		});
 	}
 
+	private void searchButtonActions() {
+		this.searchButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				QueryParameters queryParameters = searchController.getQueryParameters();
+				tableViewController.update(queryParameters);
+			}
+		});
+	}
+
+	private void resetButtonActions() {
+		this.resetButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				tableViewController.update();
+			}
+		});
+	}
 	public void showWindow(ActionEvent event, String windowName) {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
@@ -90,6 +121,7 @@ public class ToolBarController {
 				mainVBox.setDisable(!mainVBox.isDisable());
 				tableViewController.update();
 				inputDataController.update(null, null, null, null, null, null);
+				searchController.updateData();
 			}
 		});
 	}

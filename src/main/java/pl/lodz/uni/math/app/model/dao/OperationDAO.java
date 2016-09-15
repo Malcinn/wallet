@@ -3,6 +3,7 @@ package pl.lodz.uni.math.app.model.dao;
 import java.util.List;
 
 import pl.lodz.uni.math.app.model.domain.Operation;
+import pl.lodz.uni.math.app.model.domain.QueryParameters;
 
 public interface OperationDAO {
 	/*
@@ -25,4 +26,8 @@ public interface OperationDAO {
 	 * method return list of Operations.
 	 */
 	public List<Operation> getOperations();
+	/*
+	 * method return list of Operations base on parameters i queryParameters object.
+	 */
+	public List<Operation> getOperations(QueryParameters queryParameters);
 }

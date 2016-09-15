@@ -20,6 +20,7 @@ import pl.lodz.uni.math.app.controller.util.OperationTableView;
 import pl.lodz.uni.math.app.model.dao.OperationDAO;
 import pl.lodz.uni.math.app.model.domain.Operation;
 import pl.lodz.uni.math.app.model.domain.OperationType;
+import pl.lodz.uni.math.app.model.domain.QueryParameters;
 
 public class TableViewController {
 
@@ -80,6 +81,15 @@ public class TableViewController {
 
 		updateResultsLabel();
 	}
+	
+	public void update(QueryParameters queryParameters) {
+		tableViewSetColumns();
+		ObservableList<OperationTableView> operationsTableViewObservableList = FXCollections
+				.observableArrayList(getOperationTablewViewListFromOperationsList(operationDAO.getOperations(queryParameters)));
+		tableView.setItems(operationsTableViewObservableList);
+
+		updateResultsLabel();
+	}
 
 	private void tableViewSetColumns() {
 		tableView.getColumns().clear();
@@ -104,7 +114,7 @@ public class TableViewController {
 
 	private List<OperationTableView> getOperationTablewViewListFromOperationsList(List<Operation> operations) {
 		List<OperationTableView> resultList = new ArrayList<>();
-		for (Operation operation : operationDAO.getOperations()) {
+		for (Operation operation : operations) {
 			resultList.add(new OperationTableView(operation));
 		}
 		return resultList;
@@ -114,7 +124,7 @@ public class TableViewController {
 		BigDecimal outcome = new BigDecimal(0);
 		BigDecimal income = new BigDecimal(0);
 		BigDecimal sum = null;
-		for (Operation operation : operationDAO.getOperations()) {
+		for (Operation operation : tableView.getItems()) {
 			if (operation.getType().equals(OperationType.IN))
 				income = income.add(operation.getAmount());
 			if (operation.getType().equals(OperationType.OUT))

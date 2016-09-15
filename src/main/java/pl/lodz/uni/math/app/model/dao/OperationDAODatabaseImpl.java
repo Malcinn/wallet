@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import pl.lodz.uni.math.app.model.domain.Operation;
 import pl.lodz.uni.math.app.model.domain.OperationType;
+import pl.lodz.uni.math.app.model.domain.QueryParameters;
 
 public class OperationDAODatabaseImpl implements OperationDAO {
 
@@ -135,7 +136,7 @@ public class OperationDAODatabaseImpl implements OperationDAO {
 			statement = connection.prepareStatement(sql);
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
-				resultList.add( new Operation(resultSet.getInt(1),
+				resultList.add(new Operation(resultSet.getInt(1),
 						(resultSet.getString(2).equals(OperationType.IN.toString()) ? OperationType.IN
 								: OperationType.OUT),
 						resultSet.getDate(3), resultSet.getString(4), resultSet.getBigDecimal(5),
@@ -145,6 +146,109 @@ public class OperationDAODatabaseImpl implements OperationDAO {
 			log.error("Error ocured in getOperaitons method. Message: " + e.getMessage());
 		}
 		return resultList;
+	}
+
+	@Override
+	public List<Operation> getOperations(QueryParameters queryParameters) {
+		String sql = getSqlQuery(queryParameters).toString();
+		List<Operation> resultList = new ArrayList<>();
+		PreparedStatement statement = null;
+		try {
+			statement = connection.prepareStatement(sql);
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				resultList.add(new Operation(resultSet.getInt(1),
+						(resultSet.getString(2).equals(OperationType.IN.toString()) ? OperationType.IN
+								: OperationType.OUT),
+						resultSet.getDate(3), resultSet.getString(4), resultSet.getBigDecimal(5),
+						categoryDAO.getCategory(resultSet.getInt(6)), walletDAO.getWallet(resultSet.getInt(7))));
+			}
+		} catch (SQLException e) {
+			log.error("Error ocured in getOperaitons method. Message: " + e.getMessage());
+		}
+		return resultList;
+	}
+
+	private StringBuilder getSqlQuery(QueryParameters queryParameters) {
+		ArrayList<StringBuilder> sqlWhereClausure = new ArrayList<>();
+		sqlWhereClausure.add(new StringBuilder("SELECT * FROM " + OPERATION));
+		processDateQueryParameter(queryParameters, sqlWhereClausure);
+		processTypeQueryParameter(queryParameters, sqlWhereClausure);
+		processAmountQueryParameter(queryParameters, sqlWhereClausure);
+		processCategoryQueryParameter(queryParameters, sqlWhereClausure);
+		processWalletQueryParameter(queryParameters, sqlWhereClausure);
+
+		appendWhereClausure(sqlWhereClausure);
+		appendAndConnector(sqlWhereClausure);
+		StringBuilder stringBuilder = new StringBuilder();
+		for (StringBuilder string : sqlWhereClausure) {
+			stringBuilder.append(string);
+		}
+		return stringBuilder;
+	}
+
+	private void appendAndConnector(ArrayList<StringBuilder> sqlWhereClausure) {
+		for (int i = 1; i < sqlWhereClausure.size() - 1; i++) {
+			sqlWhereClausure.get(i).append(" AND");
+		}
+	}
+
+	private void appendWhereClausure(ArrayList<StringBuilder> sqlWhereClausure) {
+		if (sqlWhereClausure.size() >= 2) {
+			sqlWhereClausure.get(0).append(" WHERE");
+		}
+	}
+
+	private void processWalletQueryParameter(QueryParameters queryParameters,
+			ArrayList<StringBuilder> sqlWhereClausure) {
+		if (queryParameters.getWallet() != null)
+			sqlWhereClausure.add(new StringBuilder(" wallet_id =" + queryParameters.getWallet().getId()));
+	}
+
+	private void processCategoryQueryParameter(QueryParameters queryParameters,
+			ArrayList<StringBuilder> sqlWhereClausure) {
+		if (queryParameters.getCategory() != null)
+			sqlWhereClausure.add(new StringBuilder(" category_id =" + queryParameters.getCategory().getId()));
+	}
+
+	private void processAmountQueryParameter(QueryParameters queryParameters,
+			ArrayList<StringBuilder> sqlWhereClausure) {
+		if (queryParameters.getAmountFrom() != null && queryParameters.getAmountTo() != null) {
+			if (queryParameters.getAmountTo().compareTo(queryParameters.getAmountFrom()) == 1) {
+				sqlWhereClausure.add(new StringBuilder(" amount >=" + queryParameters.getAmountFrom() + " AND amount <="
+						+ queryParameters.getAmountTo()));
+			} else if (queryParameters.getAmountTo().compareTo(queryParameters.getAmountFrom()) == 0) {
+				sqlWhereClausure.add(new StringBuilder(" amount =" + queryParameters.getAmountFrom()));
+			}
+
+		} else {
+			if (queryParameters.getAmountFrom() != null)
+				sqlWhereClausure.add(new StringBuilder(" amount >=" + queryParameters.getAmountFrom()));
+			if (queryParameters.getAmountTo() != null)
+				sqlWhereClausure.add(new StringBuilder(" amount <=" + queryParameters.getAmountTo()));
+		}
+	}
+
+	private void processTypeQueryParameter(QueryParameters queryParameters,
+			ArrayList<StringBuilder> sqlWhereClausure) {
+		if (queryParameters.getType() != null)
+			sqlWhereClausure.add(new StringBuilder(" type='" + queryParameters.getType().toString() + "'"));
+	}
+
+	private void processDateQueryParameter(QueryParameters queryParameters, ArrayList<StringBuilder> sqlWhereClausure) {
+		if (queryParameters.getFrom() != null && queryParameters.getTo() != null) {
+			if (queryParameters.getFrom().before(queryParameters.getTo())) {
+				sqlWhereClausure.add(new StringBuilder(
+						" date >='" + queryParameters.getFrom() + "' AND date <='" + queryParameters.getTo() + "'"));
+			} else if (queryParameters.getFrom().equals(queryParameters.getTo())) {
+				sqlWhereClausure.add(new StringBuilder(" date ='" + queryParameters.getFrom()));
+			}
+		} else {
+			if (queryParameters.getFrom() != null)
+				sqlWhereClausure.add(new StringBuilder(" date >='" + queryParameters.getFrom() + "'"));
+			if (queryParameters.getTo() != null)
+				sqlWhereClausure.add(new StringBuilder(" date <='" + queryParameters.getTo() + "'"));
+		}
 	}
 
 }

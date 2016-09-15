@@ -42,10 +42,34 @@ public class MainWindowController implements Initializable {
 	Button walletsButton;
 
 	@FXML
-	Button statisticsButton;
+	Button searchButton;
+
+	@FXML
+	Button resetButton;
 
 	@FXML
 	VBox rightVBox;
+
+	@FXML
+	DatePicker fromDatePickerSearch;
+
+	@FXML
+	DatePicker toDatePickerSearch;
+
+	@FXML
+	ComboBox<OperationType> typeComboBoxSearch;
+
+	@FXML
+	TextField amountFomTextFieldSearch;
+
+	@FXML
+	TextField amountToTextFieldSearch;
+
+	@FXML
+	ComboBox<String> categoryComboBoxSearch;
+
+	@FXML
+	ComboBox<String> walletComboBoxSearch;
 
 	@FXML
 	TableView<OperationTableView> tableView;
@@ -139,12 +163,15 @@ public class MainWindowController implements Initializable {
 				descriptionTextField, descriptionLabelInfo, amountTextField, amountLabelInfo, categoryComboBox,
 				categoryLabelInfo, walletComboBox, walletLabelInfo, categoryDAO, walletDAO);
 		this.labelInfoController = new LabelInfoController(amountLabelInfo);
+		this.searchController = new SearchController(fromDatePickerSearch, toDatePickerSearch, typeComboBoxSearch,
+				amountFomTextFieldSearch, amountToTextFieldSearch, categoryComboBoxSearch, walletComboBoxSearch,
+				categoryDAO, walletDAO, labelInfoController);
 		this.tableViewController = new TableViewController(operationDAO, inputDataController, labelInfoController,
 				tableView, resultsLabel);
 		this.buttonsController = new ButtonsController(addButton, updateButton, removeButton, inputDataController,
 				tableViewController, labelInfoController, operationDAO);
-		this.toolBarController = new ToolBarController(mainVBox, categoriesButton, walletsButton, tableViewController,
-				inputDataController);
+		this.toolBarController = new ToolBarController(mainVBox, searchButton, resetButton, categoriesButton,
+				walletsButton, tableViewController, inputDataController, searchController);
 
 	}
 

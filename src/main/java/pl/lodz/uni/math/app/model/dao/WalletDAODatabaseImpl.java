@@ -18,7 +18,7 @@ public class WalletDAODatabaseImpl implements WalletDAO {
 	private static final Logger log = LogManager.getLogger(WalletDAODatabaseImpl.class);
 
 	private static final String OPERATION = "Operation";
-	
+
 	private static final String WALLET = "Wallet";
 
 	private static final String WALLET_ID = "wallet_id";
@@ -72,20 +72,22 @@ public class WalletDAODatabaseImpl implements WalletDAO {
 
 	@Override
 	public Wallet getWallet(String name) {
-		String sql = "SELECT * FROM " + WALLET + " WHERE name LIKE(?)";
-		PreparedStatement statement = null;
-		try {
-			statement = connection.prepareStatement(sql);
-			statement.setString(1, name);
-			ResultSet resultSet = statement.executeQuery();
-			resultSet.next();
-			Wallet wallet = new Wallet(resultSet.getInt(1), resultSet.getString(2));
-			resultSet.close();
-			statement.close();
-			connection.commit();
-			return wallet;
-		} catch (SQLException e) {
-			log.error("Error ocurred in getWallet method. Message: " + e.getMessage());
+		if (name != null) {
+			String sql = "SELECT * FROM " + WALLET + " WHERE name LIKE(?)";
+			PreparedStatement statement = null;
+			try {
+				statement = connection.prepareStatement(sql);
+				statement.setString(1, name);
+				ResultSet resultSet = statement.executeQuery();
+				resultSet.next();
+				Wallet wallet = new Wallet(resultSet.getInt(1), resultSet.getString(2));
+				resultSet.close();
+				statement.close();
+				connection.commit();
+				return wallet;
+			} catch (SQLException e) {
+				log.error("Error ocurred in getWallet method. Message: " + e.getMessage());
+			}
 		}
 		return null;
 	}

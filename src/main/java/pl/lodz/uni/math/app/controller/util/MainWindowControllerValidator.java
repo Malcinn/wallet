@@ -1,6 +1,7 @@
 package pl.lodz.uni.math.app.controller.util;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,12 +29,17 @@ public class MainWindowControllerValidator {
 	}
 
 	public static boolean checkDataInDatePicker(DatePicker datePicker, Label label) {
-		if (datePicker.getValue() != null) {
+		if (datePicker.getValue() == null)
+			return true;
+		try{
+			Date date = DateUtils.localDateToJavaSqlDate(datePicker.getValue());
 			label.setText(EMPTY_STRING);
 			return true;
+		} catch (Exception e) {
+			label.setText(INCORRECT_VALUE_INFO);
 		}
-		label.setText(INCORRECT_VALUE_INFO);
 		return false;
+		
 	}
 
 	public static boolean checkDataInTextField(TextField textField, Label label) {
@@ -48,6 +54,8 @@ public class MainWindowControllerValidator {
 	}
 
 	public static boolean checkDataInTextFieldAsBigDecimal(TextField textField, Label label) {
+		if (textField.getText() == null || !textField.getText().trim().equals(""))
+			return true;
 		if (textField.getText() != null) {
 			String value = textField.getText().trim();
 			if (!value.equals("")) {
