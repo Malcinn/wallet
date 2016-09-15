@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -20,43 +23,70 @@ import pl.lodz.uni.math.app.model.domain.OperationType;
 
 public class MainWindowRightVboxController {
 
-	private static final String EMPTY_STRING = "";
-	
-	private static final String LABEL_INFO_DATA = "No current selected operaiton.";
-	
-	private OperationDAO operationDAO  = null;
-	
-	private TableView tableView = null;
+	private static final Logger log = LogManager.getLogger(MainWindowRightVboxController.class);
+
+	private static final String ID_COLUMN_NAME = "id";
+
+	private static final String TYPE_COLUMN_NAME = "type";
+
+	private static final String DATE_COLUMN_NAME = "date";
+
+	private static final String DESCRIPTION_COLUMN_NAME = "description";
+
+	private static final String AMOUNT_COLUMN_NAME = "amount";
+
+	private static final String WALLET_COLUMN_NAME = "wallet";
+
+	private static final String WALLET_PROPERTY_NAME = "waletName";
+
+	private static final String CATEGORY_COLUMN_NAME = "category";
+
+	private static final String CATEGORY_PROPERTY_NAME = "categoryName";
+
+	public static final String EMPTY_STRING = "";
+
+	public static final String LABEL_INFO_DATA = "No current selected operaiton.";
+
+	private OperationDAO operationDAO = null;
+
+	private TableView<OperationTableView> tableView = null;
 
 	private Label resultsLabel = null;
 
 	private Label infoLabel = null;
-	
+
 	private MainWindowLeftTopVBoxController mainWindowLeftTopVBoxController = null;
-	
-	public MainWindowRightVboxController(OperationDAO operationDAO, TableView tableView, Label resultsLabel, Label infoLabel) {
+
+	public MainWindowRightVboxController(OperationDAO operationDAO, TableView<OperationTableView> tableView, Label resultsLabel,
+			Label infoLabel, MainWindowLeftTopVBoxController mainWindowLeftTopVBoxController) {
 		this.operationDAO = operationDAO;
 		this.tableView = tableView;
 		this.resultsLabel = resultsLabel;
 		this.infoLabel = infoLabel;
+		this.mainWindowLeftTopVBoxController = mainWindowLeftTopVBoxController; 
+		initalize();
 	}
-	
+
+	public void initalize() {
+		addOnClickActionOnTableViewRow();
+	}
+
 	public void updateTableViewData() {
 		tableView.getColumns().clear();
-		TableColumn idTableColumn = new TableColumn("id");
-		idTableColumn.setCellValueFactory(new PropertyValueFactory("id"));
-		TableColumn typeTableColumn = new TableColumn("type");
-		typeTableColumn.setCellValueFactory(new PropertyValueFactory("type"));
-		TableColumn dateTableColumn = new TableColumn("date");
-		dateTableColumn.setCellValueFactory(new PropertyValueFactory("date"));
-		TableColumn descriptionTableColumn = new TableColumn("description");
-		descriptionTableColumn.setCellValueFactory(new PropertyValueFactory("description"));
-		TableColumn amountTableColumn = new TableColumn("amount");
-		amountTableColumn.setCellValueFactory(new PropertyValueFactory("amount"));
-		TableColumn walletTableColumn = new TableColumn("wallet");
-		walletTableColumn.setCellValueFactory(new PropertyValueFactory("walletName"));
-		TableColumn categoryTableColumn = new TableColumn("category");
-		categoryTableColumn.setCellValueFactory(new PropertyValueFactory("categoryName"));
+		TableColumn idTableColumn = new TableColumn(ID_COLUMN_NAME);
+		idTableColumn.setCellValueFactory(new PropertyValueFactory(ID_COLUMN_NAME));
+		TableColumn typeTableColumn = new TableColumn(TYPE_COLUMN_NAME);
+		typeTableColumn.setCellValueFactory(new PropertyValueFactory(TYPE_COLUMN_NAME));
+		TableColumn dateTableColumn = new TableColumn(DATE_COLUMN_NAME);
+		dateTableColumn.setCellValueFactory(new PropertyValueFactory(DATE_COLUMN_NAME));
+		TableColumn descriptionTableColumn = new TableColumn(DESCRIPTION_COLUMN_NAME);
+		descriptionTableColumn.setCellValueFactory(new PropertyValueFactory(DESCRIPTION_COLUMN_NAME));
+		TableColumn amountTableColumn = new TableColumn(AMOUNT_COLUMN_NAME);
+		amountTableColumn.setCellValueFactory(new PropertyValueFactory(AMOUNT_COLUMN_NAME));
+		TableColumn walletTableColumn = new TableColumn(WALLET_COLUMN_NAME);
+		walletTableColumn.setCellValueFactory(new PropertyValueFactory(WALLET_PROPERTY_NAME));
+		TableColumn categoryTableColumn = new TableColumn(CATEGORY_COLUMN_NAME);
+		categoryTableColumn.setCellValueFactory(new PropertyValueFactory(CATEGORY_PROPERTY_NAME));
 
 		tableView.getColumns().addAll(idTableColumn, typeTableColumn, dateTableColumn, descriptionTableColumn,
 				amountTableColumn, categoryTableColumn, walletTableColumn);
@@ -67,7 +97,7 @@ public class MainWindowRightVboxController {
 
 		updateResultsLabel();
 	}
-	
+
 	private List<OperationTableView> getOperationTablewViewListFromOperationsList(List<Operation> operations) {
 		List<OperationTableView> resultList = new ArrayList<>();
 		for (Operation operation : operationDAO.getOperations()) {
@@ -75,8 +105,8 @@ public class MainWindowRightVboxController {
 		}
 		return resultList;
 	}
-	
-	public void updateResultsLabel() {
+
+	private void updateResultsLabel() {
 		BigDecimal outcome = new BigDecimal(0);
 		BigDecimal income = new BigDecimal(0);
 		BigDecimal sum = null;
@@ -91,11 +121,11 @@ public class MainWindowRightVboxController {
 			resultsLabel.setTextFill(Color.RED);
 		else
 			resultsLabel.setTextFill(Color.GREEN);
-		
-		resultsLabel
-				.setText("income: " + income.toString() + " outcome: " + outcome.toString() + " sum: " + sum.toString());
+
+		resultsLabel.setText(
+				"income: " + income.toString() + " outcome: " + outcome.toString() + " sum: " + sum.toString());
 	}
-	
+
 	public void updateInfoLabelText(String text) {
 		this.infoLabel.setText(text);
 	}
@@ -106,20 +136,20 @@ public class MainWindowRightVboxController {
 			public void handle(Event event) {
 				try {
 					Operation operation = getCurrentSelectedOperationFromTableView();
-					updateDataInLeftTopVBox(operation.getType(), operation.getDate(), operation.getDescription(),
-							operation.getAmount().toString(), operation.getCategory().getName(),
-							operation.getWallet().getName());
-					updateInfoLabelText("");
+					mainWindowLeftTopVBoxController.updateDataInLeftTopVBox(operation.getType(), operation.getDate(),
+							operation.getDescription(), operation.getAmount().toString(),
+							operation.getCategory().getName(), operation.getWallet().getName());
+					updateInfoLabelText(EMPTY_STRING);
 				} catch (NullPointerException e) {
-					labelInfo.setText(LABEL_INFO_DATA);
+					updateInfoLabelText(LABEL_INFO_DATA);
 					log.error("No category to select. Message: " + e.getMessage());
 				}
 
 			}
 		});
 	}
-	
-	private Operation getCurrentSelectedOperationFromTableView() {
+
+	public Operation getCurrentSelectedOperationFromTableView() {
 		try {
 			Operation operation = (Operation) tableView.getSelectionModel().getSelectedItem();
 			return operation;
