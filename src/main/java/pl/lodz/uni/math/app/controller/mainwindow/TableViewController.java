@@ -1,4 +1,4 @@
-package pl.lodz.uni.math.app.controller;
+package pl.lodz.uni.math.app.controller.mainwindow;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ import pl.lodz.uni.math.app.model.dao.OperationDAO;
 import pl.lodz.uni.math.app.model.domain.Operation;
 import pl.lodz.uni.math.app.model.domain.OperationType;
 
-public class MainWindowRightVboxController {
+public class TableViewController {
 
-	private static final Logger log = LogManager.getLogger(MainWindowRightVboxController.class);
+	private static final Logger log = LogManager.getLogger(TableViewController.class);
 
 	private static final String ID_COLUMN_NAME = "id";
 
@@ -53,17 +53,18 @@ public class MainWindowRightVboxController {
 
 	private Label resultsLabel = null;
 
-	private Label infoLabel = null;
+	private InputDataController inputDataController = null;
 
-	private MainWindowLeftTopVBoxController mainWindowLeftTopVBoxController = null;
+	private LabelInfoController labelInfoController = null;
 
-	public MainWindowRightVboxController(OperationDAO operationDAO, TableView<OperationTableView> tableView, Label resultsLabel,
-			Label infoLabel, MainWindowLeftTopVBoxController mainWindowLeftTopVBoxController) {
+	public TableViewController(OperationDAO operationDAO, InputDataController inputDataController,
+			LabelInfoController labelInfoController, TableView<OperationTableView> tableView, Label resultsLabel) {
+		super();
 		this.operationDAO = operationDAO;
+		this.inputDataController = inputDataController;
+		this.labelInfoController = labelInfoController;
 		this.tableView = tableView;
 		this.resultsLabel = resultsLabel;
-		this.infoLabel = infoLabel;
-		this.mainWindowLeftTopVBoxController = mainWindowLeftTopVBoxController; 
 		initalize();
 	}
 
@@ -71,7 +72,16 @@ public class MainWindowRightVboxController {
 		addOnClickActionOnTableViewRow();
 	}
 
-	private void tableViewSetColumns () {
+	public void update() {
+		tableViewSetColumns();
+		ObservableList<OperationTableView> operationsTableViewObservableList = FXCollections
+				.observableArrayList(getOperationTablewViewListFromOperationsList(operationDAO.getOperations()));
+		tableView.setItems(operationsTableViewObservableList);
+
+		updateResultsLabel();
+	}
+
+	private void tableViewSetColumns() {
 		tableView.getColumns().clear();
 		TableColumn idTableColumn = new TableColumn(ID_COLUMN_NAME);
 		idTableColumn.setCellValueFactory(new PropertyValueFactory(ID_COLUMN_NAME));
@@ -91,16 +101,7 @@ public class MainWindowRightVboxController {
 		tableView.getColumns().addAll(idTableColumn, typeTableColumn, dateTableColumn, descriptionTableColumn,
 				amountTableColumn, categoryTableColumn, walletTableColumn);
 	}
-	
-	public void updateTableViewData() {
-		tableViewSetColumns();
-		ObservableList<OperationTableView> operationsTableViewObservableList = FXCollections
-				.observableArrayList(getOperationTablewViewListFromOperationsList(operationDAO.getOperations()));
-		tableView.setItems(operationsTableViewObservableList);
 
-		updateResultsLabel();
-	}
-	
 	private List<OperationTableView> getOperationTablewViewListFromOperationsList(List<Operation> operations) {
 		List<OperationTableView> resultList = new ArrayList<>();
 		for (Operation operation : operationDAO.getOperations()) {
@@ -129,22 +130,18 @@ public class MainWindowRightVboxController {
 				"income: " + income.toString() + " outcome: " + outcome.toString() + " sum: " + sum.toString());
 	}
 
-	public void updateInfoLabelText(String text) {
-		this.infoLabel.setText(text);
-	}
-
 	private void addOnClickActionOnTableViewRow() {
 		tableView.setOnMouseReleased(new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
 				try {
-					Operation operation = getCurrentSelectedOperationFromTableView();
-					mainWindowLeftTopVBoxController.updateDataInLeftTopVBox(operation.getType(), operation.getDate(),
-							operation.getDescription(), operation.getAmount().toString(),
-							operation.getCategory().getName(), operation.getWallet().getName());
-					updateInfoLabelText(EMPTY_STRING);
+					Operation operation = getCurrentSelectedOperation();
+					inputDataController.update(operation.getType(), operation.getDate(), operation.getDescription(),
+							operation.getAmount().toString(), operation.getCategory().getName(),
+							operation.getWallet().getName());
+					labelInfoController.update(EMPTY_STRING);
 				} catch (NullPointerException e) {
-					updateInfoLabelText(LABEL_INFO_DATA);
+					labelInfoController.update(LABEL_INFO_DATA);
 					log.error("No category to select. Message: " + e.getMessage());
 				}
 
@@ -152,7 +149,7 @@ public class MainWindowRightVboxController {
 		});
 	}
 
-	public Operation getCurrentSelectedOperationFromTableView() {
+	public Operation getCurrentSelectedOperation() {
 		try {
 			Operation operation = (Operation) tableView.getSelectionModel().getSelectedItem();
 			return operation;

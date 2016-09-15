@@ -9,7 +9,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import pl.lodz.uni.math.app.model.domain.OperationType;
 
 public class MainWindowControllerValidator {
 
