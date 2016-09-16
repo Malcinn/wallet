@@ -162,7 +162,7 @@ public class MainWindowController implements Initializable {
 		this.inputDataController = new InputDataController(typeComboBox, typeLabelInfo, dateDatePicker, dateLabelInfo,
 				descriptionTextField, descriptionLabelInfo, amountTextField, amountLabelInfo, categoryComboBox,
 				categoryLabelInfo, walletComboBox, walletLabelInfo, categoryDAO, walletDAO);
-		this.labelInfoController = new LabelInfoController(amountLabelInfo);
+		this.labelInfoController = new LabelInfoController(labelInfo);
 		this.searchController = new SearchController(fromDatePickerSearch, toDatePickerSearch, typeComboBoxSearch,
 				amountFomTextFieldSearch, amountToTextFieldSearch, categoryComboBoxSearch, walletComboBoxSearch,
 				categoryDAO, walletDAO, labelInfoController);

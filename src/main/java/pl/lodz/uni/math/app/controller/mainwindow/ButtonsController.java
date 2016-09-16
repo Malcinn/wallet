@@ -61,11 +61,13 @@ public class ButtonsController {
 			public void handle(ActionEvent event) {
 				Operation operation = tableViewController.getCurrentSelectedOperation();
 				if (inputDataController.checkData()) {
-					updateOperationData(operation);
-					if (operationDAO.updateOperation(operation)) {
-						labelInfoController.update(MainWindowControllerFinalVariables.EMPTY_STRING);
-						tableViewController.update();
-					} else {
+					try {
+						updateOperationData(operation);
+						if (operationDAO.updateOperation(operation)) {
+							labelInfoController.update(MainWindowControllerFinalVariables.EMPTY_STRING);
+							tableViewController.update();
+						}
+					} catch (NullPointerException e) {
 						labelInfoController.update(MainWindowControllerFinalVariables.LABEL_INFO_DATA);
 					}
 				}
